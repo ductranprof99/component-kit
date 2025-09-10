@@ -1,0 +1,15 @@
+{
+  "originHash" : "fd508ce25505e51dee0b506b8301aaffe9ba6b308e30d2d8d65dbba919a4fd89",
+  "pins" : [
+    {
+      "identity" : "ochamcrest",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hamcrest/OCHamcrest",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0054132eb4b68a5446783ac115b89fc05aec847a"
+      }
+    }
+  ],
+  "version" : 3
+}
