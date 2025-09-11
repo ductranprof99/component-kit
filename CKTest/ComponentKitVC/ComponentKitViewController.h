@@ -7,6 +7,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ComponentKitViewController : UIViewController
+@interface ComponentKitViewController: UICollectionViewController
 
 @end

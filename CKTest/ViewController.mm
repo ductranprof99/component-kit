@@ -7,7 +7,7 @@
 
 #import "ViewController.h"
 #import "ComponentKitVC/ComponentKitViewController.h"
-#import "SwiftUIVC/CKTest-Bridging-Header.h"
+#import "CKTest-Swift.h"
 
 @interface ViewController ()
 
@@ -23,11 +23,10 @@
                                                     image:[UIImage systemImageNamed: @"play.square"]
                                             selectedImage:[UIImage systemImageNamed: @"play.square.fill"]];
     cpVC.view.backgroundColor = UIColor.redColor;
-    ComponentKitViewController *cpVC2 = [ComponentKitViewController new];
+    SwiftUIViewController *cpVC2 = [SwiftUIViewController new];
     cpVC2.tabBarItem = [[UITabBarItem alloc] initWithTitle: @"Component Kit"
                                                     image:[UIImage systemImageNamed: @"fish"]
                                             selectedImage:[UIImage systemImageNamed: @"fish.fill"]];
-    cpVC2.view.backgroundColor = UIColor.whiteColor;
     
     self.viewControllers = @[cpVC, cpVC2];
 }
