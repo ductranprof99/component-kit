@@ -54,6 +54,10 @@ CellModel *CellModelFromDict(NSDictionary *dict) {
         case CellModelTypeImageStrip:
             model.images = dict[@"images"];
             break;
+        case CellModelTypeImage:
+            model.randomImage = [UIImage imageNamed:@"image_feed"];
+            model.text = @"This is the title of the cell";
+            break;
         case CellModelTypeRandom:
             model.text = @"test";
             NSNumber *h = dict[@"fixedHeight"];
@@ -93,10 +97,14 @@ NSArray *cellListData(void)
                 case 2: // ImageStrip
                     entry = @{
                         @"type": @(CellModelTypeImageStrip),
-                        
                     };
                     break;
-                case 3: // Random
+                case 3:
+                    entry = @{
+                        @"type": @(CellModelTypeImage),
+                    };
+                    break;
+                case 4: // Random
                     entry = @{
                         @"type": @(CellModelTypeRandom),
                         @"fixedHeight": @(80 + (i * 10) % 180)

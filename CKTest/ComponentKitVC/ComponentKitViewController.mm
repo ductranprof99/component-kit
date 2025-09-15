@@ -20,6 +20,7 @@
     CKCollectionViewTransactionalDataSource *_dataSource;
     CKComponentFlexibleSizeRangeProvider *_sizeRangeProvider;
     CellDataLoader *_cellDataLoader;
+    BOOL isRendered;
 }
 
 - (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout
@@ -29,6 +30,7 @@
         _cellDataLoader = [[CellDataLoader alloc] init];
         // Demo data
     }
+    isRendered = NO;
     return self;
 }
 
@@ -39,7 +41,14 @@
     self.collectionView.backgroundColor = [UIColor whiteColor];
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.delegate = self;
-    
+}
+- (void)viewWillAppear: (BOOL) animated
+{
+    [super viewWillAppear:animated];
+    if (isRendered) {
+        return;
+    }
+    isRendered = YES;
     const CKSizeRange sizeRange = [_sizeRangeProvider sizeRangeForBoundingSize:self.collectionView.bounds.size];
     NSSet *imageNames = [NSSet setWithObjects:
                          @"LosAngeles",
@@ -47,13 +56,10 @@
                          @"Drops",
                          @"Powell",
                          nil];
-    CellContext *context = [[CellContext alloc]
-                            initWithImageNames: imageNames];
-    
     CKTransactionalComponentDataSourceConfiguration *config =
     [[CKTransactionalComponentDataSourceConfiguration alloc]
      initWithComponentProvider:[self class]
-     context:context
+     context:nil
      sizeRange:sizeRange];
     
     _dataSource = [[CKCollectionViewTransactionalDataSource alloc]

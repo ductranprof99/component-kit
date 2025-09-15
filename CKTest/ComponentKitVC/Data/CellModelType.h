@@ -11,6 +11,7 @@ typedef NS_ENUM(NSInteger, CellModelType) {
     CellModelTypeText = 0,
     CellModelTypeVideo,
     CellModelTypeImageStrip,
+    CellModelTypeImage,
     CellModelTypeRandom
 };
 
