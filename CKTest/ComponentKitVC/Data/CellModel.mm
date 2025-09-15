@@ -38,7 +38,7 @@ static UIColor *ColorFromName(NSString *name) {
 
 
 #pragma mark - Cell Model initialie
-static CellModel *CellModelFromDict(NSDictionary *dict) {
+CellModel *CellModelFromDict(NSDictionary *dict) {
     CellModel *model = [CellModel new];
     NSNumber *typeNum = dict[@"type"];
     if (typeNum) {
@@ -68,7 +68,7 @@ static CellModel *CellModelFromDict(NSDictionary *dict) {
     
 }
 
-static NSArray *cellListData(void)
+NSArray *cellListData(void)
 {
     static NSArray *data;
     static dispatch_once_t onceToken;
@@ -110,3 +110,6 @@ static NSArray *cellListData(void)
     return data;
 }
 
+@implementation CellModel
+
+@end

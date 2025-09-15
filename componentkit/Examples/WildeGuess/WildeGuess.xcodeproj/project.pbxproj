@@ -28,6 +28,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		30D8A1A72E7803140069477E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D0B47DC41CBDAFFF00BB33CE /* ComponentKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 03B8B56A1D2A346F00EDFF59;
+			remoteInfo = ComponentKitAppleTV;
+		};
+		30D8A1A92E7803140069477E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D0B47DC41CBDAFFF00BB33CE /* ComponentKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 03A98A721D2B2BFD00C5BAC2;
+			remoteInfo = ComponentKitTestHelpersAppleTV;
+		};
+		30D8A1AB2E7803140069477E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D0B47DC41CBDAFFF00BB33CE /* ComponentKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 03F1AC061D2B2A9B00867584;
+			remoteInfo = ComponentKitTestsAppleTV;
+		};
 		D093266C1CC4647700CFEBC4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D0B47DC41CBDAFFF00BB33CE /* ComponentKit.xcodeproj */;
@@ -219,11 +240,14 @@
 			isa = PBXGroup;
 			children = (
 				D093266D1CC4647700CFEBC4 /* ComponentKit.framework */,
-				D093266F1CC4647700CFEBC4 /* ComponentKitApplicationsTestsHost.app */,
+				D09326771CC4647700CFEBC4 /* libComponentKitTestHelpers.a */,
 				D09326711CC4647700CFEBC4 /* ComponentKitTests.xctest */,
 				D09326731CC4647700CFEBC4 /* ComponentKitApplicationTests.xctest */,
 				D09326751CC4647700CFEBC4 /* ComponentTextKitApplicationTests.xctest */,
-				D09326771CC4647700CFEBC4 /* libComponentKitTestHelpers.a */,
+				D093266F1CC4647700CFEBC4 /* ComponentKitApplicationsTestsHost.app */,
+				30D8A1A82E7803140069477E /* ComponentKit.framework */,
+				30D8A1AA2E7803140069477E /* libComponentKitTestHelpers.a */,
+				30D8A1AC2E7803140069477E /* ComponentKitTestsAppleTV.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -267,6 +291,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -287,6 +312,27 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		30D8A1A82E7803140069477E /* ComponentKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ComponentKit.framework;
+			remoteRef = 30D8A1A72E7803140069477E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		30D8A1AA2E7803140069477E /* libComponentKitTestHelpers.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libComponentKitTestHelpers.a;
+			remoteRef = 30D8A1A92E7803140069477E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		30D8A1AC2E7803140069477E /* ComponentKitTestsAppleTV.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ComponentKitTestsAppleTV.xctest;
+			remoteRef = 30D8A1AB2E7803140069477E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		D093266D1CC4647700CFEBC4 /* ComponentKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -448,6 +494,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				COPY_PHASE_STRIP = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = "WildeGuess/WildeGuess-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -458,6 +506,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				COPY_PHASE_STRIP = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = "WildeGuess/WildeGuess-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

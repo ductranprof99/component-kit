@@ -7,11 +7,10 @@
 
 #import <ComponentKit/ComponentKit.h>
 
+@class CellModel;
 
-@class CellModel
+@interface WrapperComponent : CKCompositeComponent
 
-@interface WrapperCompomemt : CKCompositeComponent
-
-+
++ (instancetype)newWithCellModel: (CellModel *) model;
 
 @end

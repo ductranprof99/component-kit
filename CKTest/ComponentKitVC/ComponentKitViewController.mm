@@ -4,20 +4,23 @@
 //
 //  Created by Duc Tran on 11/9/25.
 //
-
-#import "ComponentKitViewController.h"
-#import <UIKit/UIKit.h>
 #import <ComponentKit/ComponentKit.h>
-#import "Data/CellModel.h"
-#import "Data/CellDataLoader.h"
+#import "ComponentKitViewController.h"
+#import "CellModel.h"
+#import "CellDataLoader.h"
+#import "WrapperComponent.h"
+#import "CellContext.h"
 
 @interface ComponentKitViewController () <CKComponentProvider, UICollectionViewDelegateFlowLayout>
-@property (nonatomic, strong) CKCollectionViewTransactionalDataSource *dataSource;
-@property (nonatomic, strong) CKComponentFlexibleSizeRangeProvider *sizeRangeProvider;
-@property (nonatomic, strong) CellDataLoader *cellDataLoader;
+
 @end
 
 @implementation ComponentKitViewController
+{
+    CKCollectionViewTransactionalDataSource *_dataSource;
+    CKComponentFlexibleSizeRangeProvider *_sizeRangeProvider;
+    CellDataLoader *_cellDataLoader;
+}
 
 - (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout
 {
@@ -37,15 +40,23 @@
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.delegate = self;
     
-    const CKSizeRange sizeRange = [self.sizeRangeProvider sizeRangeForBoundingSize:self.collectionView.bounds.size];
+    const CKSizeRange sizeRange = [_sizeRangeProvider sizeRangeForBoundingSize:self.collectionView.bounds.size];
+    NSSet *imageNames = [NSSet setWithObjects:
+                         @"LosAngeles",
+                         @"MarketStreet",
+                         @"Drops",
+                         @"Powell",
+                         nil];
+    CellContext *context = [[CellContext alloc]
+                            initWithImageNames: imageNames];
     
     CKTransactionalComponentDataSourceConfiguration *config =
     [[CKTransactionalComponentDataSourceConfiguration alloc]
      initWithComponentProvider:[self class]
-     context:nil
+     context:context
      sizeRange:sizeRange];
     
-    self.dataSource = [[CKCollectionViewTransactionalDataSource alloc]
+    _dataSource = [[CKCollectionViewTransactionalDataSource alloc]
                        initWithCollectionView:self.collectionView
                        supplementaryViewDataSource:nil
                        configuration:config];
@@ -55,11 +66,21 @@
     [[[CKTransactionalComponentDataSourceChangesetBuilder transactionalComponentDataSourceChangeset]
       withInsertedSections:[NSIndexSet indexSetWithIndex:0]]
      build];
-    [self.dataSource applyChangeset:initial mode:CKUpdateModeSynchronous userInfo:nil];
+    [_dataSource applyChangeset:initial mode:CKUpdateModeSynchronous userInfo:nil];
     
-    
-    // Insert all items.
-//    [self ]
+    // Insert an initial batch of items so we actually render cells.
+    NSArray<CellModel *> *firstBatch = [_cellDataLoader fetchNextWithCount:4];
+    NSMutableDictionary<NSIndexPath *, CellModel *> *items = [NSMutableDictionary new];
+    [firstBatch enumerateObjectsUsingBlock:^(CellModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        items[[NSIndexPath indexPathForItem:idx inSection:0]] = obj;
+    }];
+
+    CKTransactionalComponentDataSourceChangeset *insertItems =
+    [[[CKTransactionalComponentDataSourceChangesetBuilder transactionalComponentDataSourceChangeset]
+      withInsertedItems:items]
+     build];
+
+    [_dataSource applyChangeset:insertItems mode:CKUpdateModeAsynchronous userInfo:nil];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout
@@ -68,21 +89,21 @@
                   layout:(UICollectionViewLayout *)collectionViewLayout
   sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  return [self.dataSource sizeForItemAtIndexPath:indexPath];
+  return [_dataSource sizeForItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView
        willDisplayCell:(UICollectionViewCell *)cell
     forItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  [self.dataSource announceWillDisplayCell:cell];
+  [_dataSource announceWillDisplayCell:cell];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView
   didEndDisplayingCell:(UICollectionViewCell *)cell
     forItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  [self.dataSource announceDidEndDisplayingCell:cell];
+  [_dataSource announceDidEndDisplayingCell:cell];
 }
 
 #pragma mark - Load helper
@@ -93,30 +114,11 @@
 
 #pragma mark - CKComponentProvider
 
-+ (CKComponent *)componentForModel:(NSString *)title context:(id)context
++ (CKComponent *)componentForModel:(CellModel *)model
+                           context:(CellContext *)context
 {
   // A simple label row with full-width layout and dynamic height.
-  CKComponentSize size;
-  size.width = CKRelativeDimension::Percent(1.0); // full width
-  size.height = CKRelativeDimension::Auto();      // auto height
-
-  CKLabelAttributes attrs = {};
-  attrs.string = title;
-  attrs.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
-  attrs.color = [UIColor blackColor];
-  attrs.alignment = NSTextAlignmentLeft;
-  attrs.maximumLineHeight = 0;
-
-  CKViewComponentAttributeValueMap viewAttrs = {
-    { @selector(setBackgroundColor:), [UIColor colorWithWhite:0.97 alpha:1.0] },
-    { @selector(setContentMode:), @(UIViewContentModeRedraw) }
-  };
-
-  CKComponent *insets = [CKInsetComponent
-    newWithInsets:{ .top = 12, .left = 16, .bottom = 12, .right = 16 }
-    component:[CKLabelComponent newWithLabelAttributes:attrs viewAttributes:viewAttrs size:size]];
-
-  return insets;
+    return [WrapperComponent newWithCellModel:model];
 }
 
 @end

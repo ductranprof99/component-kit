@@ -6,7 +6,7 @@
 //
 
 #import "ViewController.h"
-#import "ComponentKitVC/ComponentKitViewController.h"
+#import "ComponentKitViewController.h"
 #import "CKTest-Swift.h"
 
 @interface ViewController ()
@@ -18,7 +18,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    ComponentKitViewController *cpVC = [ComponentKitViewController new];
+    UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+    [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+    [flowLayout setMinimumLineSpacing:0];
+    [flowLayout setMinimumInteritemSpacing:0];
+    
+    ComponentKitViewController *cpVC = [
+        [ComponentKitViewController alloc]
+        initWithCollectionViewLayout: flowLayout];
     cpVC.tabBarItem = [[UITabBarItem alloc] initWithTitle: @"Component Kit"
                                                     image:[UIImage systemImageNamed: @"play.square"]
                                             selectedImage:[UIImage systemImageNamed: @"play.square.fill"]];

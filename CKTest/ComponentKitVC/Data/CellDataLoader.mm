@@ -8,7 +8,7 @@
 #import "CellDataLoader.h"
 #import "CellModel.h"
 
-NS_ASSUME_NONNULL_BEGIN
+extern NSArray *cellListData(void);
 
 #pragma mark - Cell data loader
 
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(instancetype) init
 {
     if (self = [super init]) {
-        extern NSArray *cellListData(void);
+        
         _raw = cellListData();
         _cursor = 0;
         _lastCursor = 0;
@@ -62,4 +62,3 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END
