@@ -7,16 +7,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F3EE7D6B-476D-4577-82EC-1E475989C8B0"
+            uuid = "B41E6BD7-40D9-4E5A-95F9-A0A8263719FE"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "componentkit/Examples/WildeGuess/WildeGuess/WildeGuessCollectionViewController.mm"
+            filePath = "componentkit/ComponentKit/Components/CKNetworkImageComponent.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
-            landmarkName = "-viewDidLoad"
+            startingLineNumber = "179"
+            endingLineNumber = "179"
+            landmarkName = "-_startDownloadIfNotInReusePool"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "031D1073-A5C1-4C81-B146-3C54177D29C6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "componentkit/ComponentKit/Components/CKNetworkImageComponent.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
+            landmarkName = "-didDownloadImage:error:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E19CB5DD-7635-4093-95A8-165EBFF82D06"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "componentkit/ComponentKit/Components/CKNetworkImageComponent.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "185"
+            endingLineNumber = "185"
+            landmarkName = "-updateContentsRect"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

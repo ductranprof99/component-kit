@@ -16,7 +16,8 @@
 @property (nonatomic, copy) NSString *text;
 @property (nonatomic, copy) NSURL *videoURL;
 @property (nonatomic) CGFloat fixedHeight;
-@property (nonatomic, copy) NSArray<NSString *> *imageURLs;
+@property (nonatomic, copy) NSArray<NSString *> *listImageURL;
+@property (nonatomic, strong) NSString *imageURL;
 @property (nonatomic, strong) UIImage *randomImage;
 @property (nonatomic, copy) NSString *reuseKey;
 @end

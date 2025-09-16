@@ -6,35 +6,36 @@
 //
 
 #import "ImageCell.h"
+#import <ComponentKit/CKNetworkImageComponent.h>
+#import <ComponentKit/CKNetworkImageDownloading.h>
 #import <ComponentKit/CKImageComponent.h>
 #import <UIKit/UIKit.h>
 #import "CellModel.h"
+#import "AppImageDownloader.h"
 
 
 @implementation ImageCell
-
-
 + (instancetype)newWithData:(CellModel *)model
                     context:(CellContext *)context {
-    UIImage *img = model.randomImage;
-    if (!img) {
+    NSURL *url = [NSURL URLWithString:model.imageURL];
+    CKComponent *imgViewAsync = [CKNetworkImageComponent
+                    newWithURL: url
+                    imageDownloader: [[AppImageDownloader alloc] init]
+                    size: {
+        .width = CKRelativeDimension::Percent(1),
+        .height = CKRelativeDimension::Auto(),
+        .minHeight = 100,
+        .maxHeight = 420
+    }
+                    options: {
         
     }
-    CKComponent *imgView = [CKImageComponent
-                            newWithImage: img
-                            attributes: {
+                attributes: {
         {@selector(setContentMode:), @(UIViewContentModeScaleAspectFill)},
         {@selector(setClipsToBounds:), @(YES)}
     }
-                            size: {
-        .width = CKRelativeDimension::Percent(1),
-        .height = CKRelativeDimension::Auto(),
-        .maxHeight = 420
-    }
     ];
-    
-    
-    return [super newWithComponent:imgView];
+    return [super newWithComponent:imgViewAsync];
 }
 
 @end

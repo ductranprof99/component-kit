@@ -20,7 +20,7 @@
     // Do any additional setup after loading the view.
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
     [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
-    [flowLayout setMinimumLineSpacing:0];
+    [flowLayout setMinimumLineSpacing:10];
     [flowLayout setMinimumInteritemSpacing:0];
     
     ComponentKitViewController *cpVC = [
