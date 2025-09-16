@@ -46,19 +46,26 @@ CellModel *CellModelFromDict(NSDictionary *dict) {
     }
     switch (model.cellType) {
         case CellModelTypeText:
+            model.cellType = CellModelTypeText;
             model.text = dict[@"text"];
             break;
         case CellModelTypeVideo:
+            model.cellType = CellModelTypeVideo;
             model.videoURL = dict[@"videoURL"];
             break;
         case CellModelTypeImageStrip:
-            model.images = dict[@"images"];
+        {
+            model.cellType = CellModelTypeImageStrip;
+            model.imageURLs = dict[@"images"];
+        }
             break;
         case CellModelTypeImage:
-            model.randomImage = [UIImage imageNamed:@"image_feed"];
-            model.text = @"This is the title of the cell";
+            model.cellType = CellModelTypeImage;
+            model.randomImage = [UIImage imageNamed:dict[@"randomImage"]];
+            model.text = dict[@"text"];
             break;
         case CellModelTypeRandom:
+            model.cellType = CellModelTypeRandom;
             model.text = @"test";
             NSNumber *h = dict[@"fixedHeight"];
             model.fixedHeight = h ? [h floatValue] : 120.0f;
@@ -79,7 +86,7 @@ NSArray *cellListData(void)
     dispatch_once(&onceToken, ^{
         NSMutableArray *mutableData = [NSMutableArray array];
         for (NSInteger i = 0; i < 25; i++) {
-            NSInteger type = i % 4;
+            NSInteger type = i % 5;
             NSDictionary *entry = nil;
             switch (type) {
                 case 0: // Text
@@ -94,14 +101,23 @@ NSArray *cellListData(void)
                         @"videoURL": [NSString stringWithFormat:@"https://example.com/video%ld.mp4", (long)i]
                     };
                     break;
-                case 2: // ImageStrip
+                case 2: // ImageStri
                     entry = @{
                         @"type": @(CellModelTypeImageStrip),
+                        @"images": @[
+                            @"https://picsum.photos/200/300",
+                            @"https://picsum.photos/200/300",
+                            @"https://picsum.photos/200/300",
+                            @"https://picsum.photos/200/300",
+                            @"https://picsum.photos/200/300",
+                        ]
                     };
                     break;
                 case 3:
                     entry = @{
                         @"type": @(CellModelTypeImage),
+                        @"text" : @"I updated the CellModelTypeImageStrip case so it now iterates through the array of image names from dict[@\"images\"], loads each UIImage using imageNamed:, and assigns the resulting UIImage array to model.images.",
+                        @"randomImage": [NSString stringWithFormat:@"image_feed_%ld", (long)i/5]
                     };
                     break;
                 case 4: // Random

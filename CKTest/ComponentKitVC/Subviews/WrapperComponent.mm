@@ -17,8 +17,28 @@
 }
 
 + (instancetype)newWithCellModel: (CellModel *) model {
-    CKComponent *header = [CKComponent newWithView:{[UIView class], {{@selector(setBackgroundColor:), [UIColor redColor]}}} size:{100,100}];
-    CKComponent *footer = [CKComponent newWithView:{[UIView class], {{@selector(setBackgroundColor:), [UIColor redColor]}}} size:{100,100}];
+    CKComponent *header = [CKComponent
+                           newWithView:{
+        [UIView class],
+        {
+            {@selector(setBackgroundColor:), [UIColor redColor]}
+        }
+    }
+                           size:{
+        .width = CKRelativeDimension::Percent(1),
+        .height = CKRelativeDimension::Points(90),
+    }];
+    CKComponent *footer = [CKComponent
+                           newWithView:{
+        [UIView class],
+        {
+            {@selector(setBackgroundColor:), [UIColor blueColor]}
+        }
+    }
+                           size:{
+        .width = CKRelativeDimension::Percent(1),
+        .height = CKRelativeDimension::Points(50),
+    }];
     
     CKComponentViewConfiguration kWhiteBackgroundView = {
       [UIView class], {{@selector(setBackgroundColor:), [UIColor whiteColor]}}
@@ -30,6 +50,7 @@
         case CellModelTypeImage:
             body = [ImageCell newWithData:model
                                   context: nil];
+            break;
         default:
             CKComponent *backgroundComponent = [
                 CKComponent newWithView: {
@@ -58,6 +79,7 @@
                          newWithComponent: foreground
                          background: backgroundComponent]
             ];
+            break;
     }
     
     CKComponent *full = [CKStackLayoutComponent

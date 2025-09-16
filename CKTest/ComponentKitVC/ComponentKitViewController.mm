@@ -56,10 +56,11 @@
                          @"Drops",
                          @"Powell",
                          nil];
+    CellContext *context = [[CellContext alloc] initWithImageNames:imageNames];
     CKTransactionalComponentDataSourceConfiguration *config =
     [[CKTransactionalComponentDataSourceConfiguration alloc]
      initWithComponentProvider:[self class]
-     context:nil
+     context:context
      sizeRange:sizeRange];
     
     _dataSource = [[CKCollectionViewTransactionalDataSource alloc]

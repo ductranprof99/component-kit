@@ -33,6 +33,7 @@
     }
     ];
     
+    
     return [super newWithComponent:imgView];
 }
 
