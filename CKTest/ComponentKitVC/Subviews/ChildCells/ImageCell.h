@@ -5,7 +5,7 @@
 //  Created by ductd on 15/9/25.
 //
 
-#import <ComponentKit/CKCompositeComponent.h>
+#import <ComponentKit/ComponentKit.h>
 @class CellModel;
 @class CellContext;
 @interface ImageCell : CKCompositeComponent
