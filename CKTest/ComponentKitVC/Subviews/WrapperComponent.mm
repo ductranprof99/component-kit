@@ -10,6 +10,7 @@
 #import <ComponentKit/CKComponent.h>
 #import "CellModelType.h"
 #import "ImageCell.h"
+#import "NewStatusCell.h"
 
 @implementation WrapperComponent
 {
@@ -47,9 +48,29 @@
     CKComponent *body;
     
     switch (model.cellType) {
-        case CellModelTypeImage:
-            body = [ImageCell newWithData:model
-                                  context: nil];
+        case CellModelTypeNewStatus:
+            body = [NewStatusCell newWithModel:model];
+            break;
+        case CellModelTypeUserPost:
+            body = [CKStackLayoutComponent
+                 newWithView: kWhiteBackgroundView
+                 size:{}
+                 style:{
+                    .direction = CKStackLayoutDirectionVertical,
+                }
+                 children:{
+                    {
+                        header
+                    },
+                    {
+                        [ImageCell newWithData:model
+                                       context: nil]
+                    },
+                    {
+                        footer
+                    },
+                }];
+            
             break;
         default:
             CKComponent *backgroundComponent = [
@@ -81,25 +102,6 @@
             ];
             break;
     }
-    
-    CKComponent *full = [CKStackLayoutComponent
-     newWithView: kWhiteBackgroundView
-     size:{}
-     style:{
-        .direction = CKStackLayoutDirectionVertical,
-    }
-     children:{
-        {
-            header
-        },
-        {
-            body
-        },
-        {
-            footer
-        },
-    }];
-    
-    return [super newWithComponent:full];
+    return [super newWithComponent:body];
 }
 @end

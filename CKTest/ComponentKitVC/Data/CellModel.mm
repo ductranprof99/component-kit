@@ -10,42 +10,115 @@
 #import "CellModel.h"
 #import <UIKit/UIKit.h>
 
+// Make read-only avatar URLs writeable within this translation unit
+@interface CellModel ()
+@property (nonatomic, copy, readwrite) NSString *userAvatarURL;
+@end
+
+@interface SubPost ()
+@property (nonatomic, copy, readwrite) NSString *userAvatarURL;
+@end
+
 #pragma mark - Cell Model initialie
 CellModel *CellModelFromDict(NSDictionary *dict) {
     CellModel *model = [CellModel new];
+
+    // Resolve type safely
     NSNumber *typeNum = dict[@"type"];
     if (typeNum) {
         model.cellType = (CellModelType)[typeNum integerValue];
     }
+
     switch (model.cellType) {
-        case CellModelTypeText:
-            model.cellType = CellModelTypeText;
-            model.text = dict[@"text"];
-            break;
-        case CellModelTypeVideo:
-            model.cellType = CellModelTypeVideo;
-            model.videoURL = dict[@"videoURL"];
-            break;
-        case CellModelTypeImageStrip:
-        {
-            model.cellType = CellModelTypeImageStrip;
-            model.listImageURL = dict[@"images"];
-        }
-            break;
-        case CellModelTypeImage:
-            model.cellType = CellModelTypeImage;
-            model.imageURL = dict[@"imageURL"];
-            model.text = dict[@"text"];
-            break;
-        case CellModelTypeRandom:
-            model.cellType = CellModelTypeRandom;
-            model.text = @"test";
-            NSNumber *h = dict[@"fixedHeight"];
-            model.fixedHeight = h.longValue;
-            model.randomImage = [UIImage imageNamed:dict[@"randomImage"]];
-            break;
+        case CellModelTypeNewStatus: {
+            // 1) Static cell – do nothing
+        } break;
+
+        case CellModelTypeUserPost: {
+            // 2) User post variants
+            // Common meta
+            id likeCount = dict[@"likeCount"]; if (likeCount) model.likeCount = likeCount;
+            NSArray *comments = dict[@"comments"]; if ([comments isKindOfClass:[NSArray class]]) model.comments = comments;
+            NSString *userName = dict[@"userName"]; if (userName) model.userName = userName;
+            NSString *avatarURL = dict[@"userAvatarURL"]; if ([avatarURL isKindOfClass:[NSString class]] && avatarURL.length > 0) model.userAvatarURL = avatarURL;
+
+            // 2.2 Video post: must have videoURL
+            id videoVal = dict[@"videoURL"];
+            if (videoVal) {
+                if ([videoVal isKindOfClass:[NSURL class]]) {
+                    model.videoURL = (NSURL *)videoVal;
+                } else if ([videoVal isKindOfClass:[NSString class]]) {
+                    model.videoURL = [NSURL URLWithString:(NSString *)videoVal];
+                }
+            }
+
+            // 2.3 Image post: must have multiple images (1..n)
+            NSArray *images = dict[@"images"]; // array of URL strings
+            if ([images isKindOfClass:[NSArray class]] && images.count > 0) {
+                model.listImageURL = images;
+            }
+
+            // 2.1 Normal post text
+            NSString *text = dict[@"text"]; if (text) model.cellTextDescription = text;
+        } break;
+
+        case CellModelTypeChangeAvatar: {
+            NSString *name = dict[@"userName"]; if (name) model.userName = name;
+            NSString *avatar = dict[@"userAvatarURL"]; if ([avatar isKindOfClass:[NSString class]] && avatar.length > 0) model.userAvatarURL = avatar;
+
+            // Dedicated cell type in case caller sets it directly
+            NSString *updatedAvatar = dict[@"userUpdatedAvatar"];
+            if (updatedAvatar && updatedAvatar.length > 0) {
+                model.userUpdatedAvatar = updatedAvatar;
+            } else if (model.userAvatarURL) {
+                model.userUpdatedAvatar = model.userAvatarURL;
+            }
+        } break;
+
+        case CellModelTypeUserRepost: {
+            NSString *rpName = dict[@"userName"]; if (rpName) model.userName = rpName;
+            NSString *rpAvatar = dict[@"userAvatarURL"]; if ([rpAvatar isKindOfClass:[NSString class]] && rpAvatar.length > 0) model.userAvatarURL = rpAvatar;
+
+            // 3) Repost: Must have >= 1 subpost
+            NSArray *subpostsArr = dict[@"subPosts"]; // array of dicts
+            if ([subpostsArr isKindOfClass:[NSArray class]] && subpostsArr.count > 0) {
+                NSMutableArray<SubPost *> *subs = [NSMutableArray arrayWithCapacity:subpostsArr.count];
+                for (NSDictionary *sp in subpostsArr) {
+                    if (![sp isKindOfClass:[NSDictionary class]]) continue;
+                    SubPost *s = [SubPost new];
+                    id likeCount = sp[@"likeCount"]; if (likeCount) s.likeCount = likeCount;
+                    NSString *userName = sp[@"userName"]; if (userName) s.userName = userName;
+                    NSString *spAvatar = sp[@"userAvatarURL"]; if ([spAvatar isKindOfClass:[NSString class]] && spAvatar.length > 0) s.userAvatarURL = spAvatar;
+                    // userAvatarURL is readonly; assume it is provided via KVC-compliant backing ivar or ignored for now
+                    [subs addObject:s];
+                }
+                model.subPosts = subs;
+            } else {
+                model.subPosts = @[]; // keep empty to signal invalid/mock gap
+            }
+        } break;
+
+        case CellModelTypeShortList: {
+            // 4) Short list: Must have list short URL (array of strings)
+            NSArray *shorts = dict[@"listShortURL"];
+            if ([shorts isKindOfClass:[NSArray class]] && shorts.count > 0) {
+                model.listShortURL = shorts;
+            } else {
+                model.listShortURL = @[];
+            }
+        } break;
+
+        case CellModelTypeRecomendationVideo: {
+            // 5) Recommend video: list recommend video (array of strings)
+            NSArray *recs = dict[@"recommendVideoURL"];
+            if ([recs isKindOfClass:[NSArray class]] && recs.count > 0) {
+                model.recommendVideoURL = recs;
+            } else {
+                model.recommendVideoURL = @[];
+            }
+        } break;
     }
-    
+
     return model;
     
 }
@@ -56,56 +129,112 @@ NSArray *cellListData(void)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSMutableArray *mutableData = [NSMutableArray array];
-        for (NSInteger i = 0; i < 25; i++) {
-            NSInteger type = i % 5;
-            NSDictionary *entry = nil;
-            switch (type) {
-                case 0: // Text
-                    entry = @{
-                        @"type": @(CellModelTypeText),
-                        @"text": [NSString stringWithFormat:@"Sample text entry #%ld", (long)i]
-                    };
-                    break;
-                case 1: // VideoSquare
-                    entry = @{
-                        @"type": @(CellModelTypeVideo),
-                        @"videoURL": [NSString stringWithFormat:@"https://example.com/video%ld.mp4", (long)i]
-                    };
-                    break;
-                case 2: // ImageStri
-                    entry = @{
-                        @"type": @(CellModelTypeImageStrip),
-                        @"images": @[
-                            @"https://picsum.photos/200/300",
-                            @"https://picsum.photos/200/300",
-                            @"https://picsum.photos/200/300",
-                            @"https://picsum.photos/200/300",
-                            @"https://picsum.photos/200/300",
-                        ]
-                    };
-                    break;
-                case 3:
-                    entry = @{
-                        @"type": @(CellModelTypeImage),
-                        @"text" : @"I updated the CellModelTypeImageStrip case so it now iterates through the array of image names from dict[@\"images\"], loads each UIImage using imageNamed:, and assigns the resulting UIImage array to model.images.",
-                        @"imageURL": @"https://picsum.photos/500/500"
-                    };
-                    break;
-                case 4: // Random
-                    entry = @{
-                        @"type": @(CellModelTypeRandom),
-                        @"fixedHeight": @(80 + (i * 10) % 180),
-                        @"randomImage": [NSString stringWithFormat:@"image_feed_%ld", (long)i/5]
-                    };
-                    break;
-            }
-            [mutableData addObject:entry];
+
+        // 1) New Status (static cell)
+        [mutableData addObject:@{ @"type": @(CellModelTypeNewStatus) }];
+
+        // 2.1) Normal user posts
+        for (NSInteger i = 0; i < 3; i++) {
+            [mutableData addObject:@{
+                @"type": @(CellModelTypeUserPost),
+                @"text": [NSString stringWithFormat:@"Normal post #%ld: hello world!", (long)i],
+                @"likeCount": @(10 + i),
+                @"comments": @[
+                    @{ @"username": @"alice", @"comment": @"nice!" },
+                    @{ @"username": @"bob",   @"comment": @"cool" }
+                ],
+                @"userName": @"john",
+                @"userAvatarURL": @"https://picsum.photos/40/40?u=normal"
+            }];
         }
+
+        // 2.2) Video posts
+        for (NSInteger i = 0; i < 2; i++) {
+            [mutableData addObject:@{
+                @"type": @(CellModelTypeUserPost),
+                @"videoURL": [NSString stringWithFormat:@"https://example.com/video_%ld.mp4", (long)i],
+                @"likeCount": @(100 + i),
+                @"comments": @[],
+                @"userName": @"john",
+                @"userAvatarURL": @"https://picsum.photos/40/40?u=video"
+            }];
+        }
+
+        // 2.3) Image posts (multiple images)
+        for (NSInteger i = 0; i < 2; i++) {
+            [mutableData addObject:@{
+                @"type": @(CellModelTypeUserPost),
+                @"images": @[
+                    @"https://picsum.photos/400/300?1",
+                    @"https://picsum.photos/400/300?2",
+                    @"https://picsum.photos/400/300?3"
+                ],
+                @"likeCount": @(50 + i),
+                @"userName": @"john",
+                @"userAvatarURL": @"https://picsum.photos/40/40?u=image"
+            }];
+        }
+
+        // 2.4) Change avatar posts
+        [mutableData addObject:@{
+                    @"type": @(CellModelTypeChangeAvatar),
+       @"userUpdatedAvatar":@"https://picsum.photos/200/200?avatar",
+                @"userName": @"john",
+           @"userAvatarURL": @"https://picsum.photos/40/40?u=change"
+        }];
+        
+        [mutableData addObject:@{
+            @"type": @(CellModelTypeChangeAvatar),
+            @"userName": @"john",
+            @"userAvatarURL": @"https://picsum.photos/40/40?u=change2"
+        }]; // fallback to current avatar
+
+        // 3) Repost: with >= 1 subpost
+        [mutableData addObject:@{
+            @"type": @(CellModelTypeUserRepost),
+            @"userName": @"anna",
+            @"userAvatarURL": @"https://picsum.photos/40/40?u=repost",
+            @"subPosts": @[
+                @{
+                    @"userName": @"mark",
+                    @"likeCount": @(3),
+                    @"userAvatarURL": @"https://picsum.photos/40/40?u=mark"
+                },
+                @{
+                    @"userName": @"lisa",
+                    @"likeCount": @(5),
+                    @"userAvatarURL": @"https://picsum.photos/40/40?u=lisa" }
+            ]
+        }];
+
+        // 4) Short list
+        [mutableData addObject:@{
+            @"type": @(CellModelTypeShortList),
+            @"listShortURL": @[
+                @"https://short.url/a",
+                @"https://short.url/b",
+                @"https://short.url/c"
+            ]
+        }];
+
+        // 5) Recommend video
+        [mutableData addObject:@{
+            @"type": @(CellModelTypeRecomendationVideo),
+            @"recommendVideoURL": @[
+                @"https://example.com/rec1.mp4",
+                @"https://example.com/rec2.mp4",
+                @"https://example.com/rec3.mp4"
+            ]
+        }];
+
         data = [mutableData copy];
     });
     return data;
 }
 
 @implementation CellModel
+@end
 
+
+@implementation SubPost
 @end

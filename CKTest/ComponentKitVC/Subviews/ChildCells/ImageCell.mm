@@ -13,27 +13,32 @@
 @interface ImageCellState: NSObject
 @property (nonatomic, readonly) BOOL isExpand;
 
-- (instancetype)initWithExpaned:(BOOL)expanded;
+- (instancetype)initWithExpaned:(NSInteger)expanded;
 @end
 
 @implementation ImageCellState
 
-- (instancetype)initWithExpaned:(BOOL)expanded {
-    _isExpand = expanded;
+- (instancetype)initWithExpaned:(NSInteger)expanded {
+    if ((self = [super init])) {
+        _isExpand = expanded;
+    }
     return self;
 }
 
 @end
 
+@interface MySongComponentController : CKComponentController
+@end
 
 @implementation ImageCell
 + (id)initialState {
-    return [[ImageCellState alloc] initWithExpaned: NO];
+    return [[ImageCellState alloc] initWithExpaned: 0];
 }
+
 
 + (instancetype)newWithData:(CellModel *)model
                     context:(CellContext *)context {
-    NSURL *url = [NSURL URLWithString:model.imageURL];
+    NSURL *url = [NSURL URLWithString:  @"https://picsum.photos/400/300?1"];
     CKComponentScope scope(self);
     const ImageCellState *state = scope.state();
     
@@ -43,7 +48,7 @@
                                  size: {
         .width = CKRelativeDimension::Percent(1),
         .height = CKRelativeDimension::Auto(),
-        .minHeight = state.isExpand ? 300 : 100,
+        .minHeight = state.isExpand  == 0 ? 100 : state.isExpand  == 1 ? 200 : 300,
         .maxHeight = 420
     }
                                  options: {
@@ -70,6 +75,7 @@
     CKComponent *totalCombine = [CKOverlayLayoutComponent newWithComponent:imgViewAsync
                  overlay: overlay
     ];
+    
     return [super newWithComponent:totalCombine];
 }
 

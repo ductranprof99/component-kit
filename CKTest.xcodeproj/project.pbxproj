@@ -837,7 +837,7 @@
 		FA7EF6D82E71E038003D8375 /* ComponentKitApplicationTestsHostAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ComponentKitApplicationTestsHostAppDelegate.m; sourceTree = "<group>"; };
 		FA7EF6D92E71E038003D8375 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		FA7EF6DB2E71E038003D8375 /* CKComponentLifecycleTestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKComponentLifecycleTestController.h; sourceTree = "<group>"; };
-		FA7EF6DC2E71E038003D8375 /* CKComponentLifecycleTestController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentLifecycleTestController.mm; sourceTree = "<group>"; };
+		FA7EF6DC2E71E038003D8375 /* CKComponentLifecycleTestController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentLifecycleTestController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		FA7EF6DD2E71E038003D8375 /* CKComponentTestRootScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKComponentTestRootScope.h; sourceTree = "<group>"; };
 		FA7EF6DE2E71E038003D8375 /* CKTestActionComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CKTestActionComponent.h; sourceTree = "<group>"; };
 		FA7EF6DF2E71E038003D8375 /* CKTestActionComponent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKTestActionComponent.mm; sourceTree = "<group>"; };
@@ -869,7 +869,7 @@
 		FA7EF6FD2E71E038003D8375 /* CKComponentAccessibilityTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentAccessibilityTests.mm; sourceTree = "<group>"; };
 		FA7EF6FE2E71E038003D8375 /* CKComponentActionTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentActionTests.mm; sourceTree = "<group>"; };
 		FA7EF6FF2E71E038003D8375 /* CKComponentContextTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentContextTests.mm; sourceTree = "<group>"; };
-		FA7EF7002E71E038003D8375 /* CKComponentControllerLifecycleMethodTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentControllerLifecycleMethodTests.mm; sourceTree = "<group>"; };
+		FA7EF7002E71E038003D8375 /* CKComponentControllerLifecycleMethodTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentControllerLifecycleMethodTests.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		FA7EF7012E71E038003D8375 /* CKComponentControllerTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentControllerTests.mm; sourceTree = "<group>"; };
 		FA7EF7022E71E038003D8375 /* CKComponentDataSourceAttachControllerTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentDataSourceAttachControllerTests.mm; sourceTree = "<group>"; };
 		FA7EF7032E71E038003D8375 /* CKComponentDelegateAttributeTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CKComponentDelegateAttributeTests.mm; sourceTree = "<group>"; };

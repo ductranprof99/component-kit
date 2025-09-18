@@ -8,10 +8,11 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSInteger, CellModelType) {
-    CellModelTypeText = 0,
-    CellModelTypeVideo,
-    CellModelTypeImageStrip,
-    CellModelTypeImage,
-    CellModelTypeRandom
+    CellModelTypeNewStatus,
+    CellModelTypeUserPost,
+    CellModelTypeRecomendationVideo,
+    CellModelTypeChangeAvatar,
+    CellModelTypeUserRepost,
+    CellModelTypeShortList,
 };
 

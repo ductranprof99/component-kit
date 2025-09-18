@@ -10,14 +10,37 @@
 #import <UIKit/UIKit.h>
 #import "CellModelType.h"
 
-@interface CellModel : NSObject
+@interface SubPost: NSObject
+@property (nonatomic, copy) NSNumber *likeCount;
+@property (nonatomic, copy) NSString *userName;
+@property (nonatomic, readonly) NSString *userAvatarURL;
+@end
 
+@interface CellModel : NSObject
+// main character
 @property (nonatomic) CellModelType cellType;
-@property (nonatomic, copy) NSString *text;
+
+// user post
+@property (nonatomic, copy) NSString *cellTextDescription;
 @property (nonatomic, copy) NSURL *videoURL;
-@property (nonatomic) CGFloat fixedHeight;
 @property (nonatomic, copy) NSArray<NSString *> *listImageURL;
-@property (nonatomic, strong) NSString *imageURL;
-@property (nonatomic, strong) UIImage *randomImage;
+@property (nonatomic, copy) NSString *userUpdatedAvatar;
+
+// cell utility
+@property (nonatomic, copy) NSNumber *likeCount;
+@property (nonatomic, copy) NSString *userName;
+@property (nonatomic, readonly) NSString *userAvatarURL;
+@property (nonatomic, copy) NSArray<NSDictionary *> *comments;
+@property (nonatomic, copy) NSDate *cellPostDate;
+
+// cell subpost
+@property (nonatomic, copy) NSArray<SubPost *> *subPosts;
+
+// short list + recommend video
+@property (nonatomic, copy) NSArray<NSString *> *listShortURL;
+@property (nonatomic, copy) NSArray<NSString *> *recommendVideoURL;
+
+ // key value
 @property (nonatomic, copy) NSString *reuseKey;
 @end
+
