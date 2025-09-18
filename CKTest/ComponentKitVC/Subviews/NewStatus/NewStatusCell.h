@@ -23,8 +23,6 @@
 @end
 
 
-@interface NewStatusComponentController: CKComponentController
-
--(instancetype)initWithComponent:(NewStatusCell *)component;
-
+@interface NewStatusCellController: CKComponentController
 @end
+

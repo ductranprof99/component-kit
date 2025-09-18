@@ -89,3 +89,21 @@
 
 @end
 
+@implementation ImageCellController
+- (void)didMount {
+    [super didMount];
+    // Setup after the component’s view is mounted
+    NSLog(@"Hey hey hey");
+}
+
+- (void)didRemount {
+    [super didRemount];
+    NSLog(@"This mtfk did remount");
+}
+
+- (void)didUnmount {
+    // Cleanup before the view goes away
+    [super didUnmount];
+}
+
+@end

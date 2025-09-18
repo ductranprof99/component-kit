@@ -13,3 +13,5 @@
                      context: (CellContext *) context;
 @end
 
+@interface ImageCellController: CKComponentController
+@end

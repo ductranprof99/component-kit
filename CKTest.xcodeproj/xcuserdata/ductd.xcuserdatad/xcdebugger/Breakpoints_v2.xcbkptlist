@@ -167,16 +167,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B36B911E-12A1-45BF-BEA3-2161BE1821EC"
+            uuid = "AED37B30-43EE-4CF5-80FF-D47C1C0CF372"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/DataSources/CKCollectionViewDataSourceCell.m"
+            filePath = "componentkit/ComponentKit/Core/Scope/CKComponentScopeHandle.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "30"
-            endingLineNumber = "30"
-            landmarkName = "-layoutSubviews"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "+handleForComponent:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

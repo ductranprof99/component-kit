@@ -24,41 +24,12 @@
 
 @end
 
-@implementation NewStatusComponentController
-
-- (instancetype)initWithComponent:(NewStatusCell *)component {
-    self = [super initWithComponent:component];
-    if (self) {
-        // Wire things later if needed (gestures, timers, observers)
-    }
-    return self;
-}
-
-- (void)didMount {
-    [super didMount];
-    // Setup after the component’s view is mounted
-}
-
-- (void)didUnmount {
-    // Cleanup before the view goes away
-    [super didUnmount];
-}
-
-@end
-
-
 @implementation NewStatusCell
 + (id)initialState {
     return [[NewStatusCellState alloc] initEmptyValue];
 }
 
-+ (Class)controllerClass {
-    return [NewStatusComponentController class];
-}
-
-
 + (instancetype)newWithModel:(CellModel *)model {
-    
     
     CKComponentViewConfiguration invisibleBackground = {
         [UIView class],
@@ -112,6 +83,8 @@
             bottomStack
         }
     }];
+    
+    CKComponentScope scope(self);
     return [super newWithComponent:full];
 }
 
@@ -121,6 +94,19 @@
     
 }
 
-
 @end
 
+
+@implementation NewStatusCellController
+- (void)didMount {
+    [super didMount];
+    // Setup after the component’s view is mounted
+    NSLog(@"Hey hey hey");
+}
+
+- (void)didUnmount {
+    // Cleanup before the view goes away
+    [super didUnmount];
+}
+
+@end
