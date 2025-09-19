@@ -8,6 +8,7 @@
 #import <ComponentKit/ComponentKit.h>
 
 @class CellModel;
+@class NewStatusChipModel;
 
 @interface NewStatusCellState: NSObject
 @property (nonatomic, copy) NSString *text;
@@ -20,6 +21,7 @@
 
 @interface NewStatusCell : CKCompositeComponent
 + (instancetype) newWithModel: (CellModel *) model;
+- (void)scopeActionMethod:(NewStatusChipModel *)chip;
 @end
 
 
