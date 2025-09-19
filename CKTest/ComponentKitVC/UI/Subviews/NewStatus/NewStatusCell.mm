@@ -13,6 +13,7 @@
 #import "NewStatusChipComponent.h"
 #import "UIColor+Hex.h"
 #import "AppImageDownloader.h"
+#import <vector>
 
 @interface NewStatusCellState ()
 @property (nonatomic, strong) NSArray<NewStatusChipModel *> *chips;
@@ -50,7 +51,7 @@
     
     
     const CKTypedComponentAction<NewStatusChipModel *> action = {scope, @selector(didTapChip:)};
-    //    const CKTypedComponentAction<NewStatusChipModel *> actionNôCntroller = {@selector(didTapChip:)};
+//    const CKTypedComponentAction<NewStatusChipModel *> actionNoController = {@selector(didTapChip:)};
     
     
     CKComponent *full = [
@@ -116,6 +117,8 @@
         newWithView:{[UITextField class], {
             
             {@selector(setText:), @"email"},
+//            std::vector<SEL> vectors;
+//            vectors.put
             
             CKComponentDelegateAttribute(@selector(setDelegate:), {
                 @selector(textFieldDidEndEditing:),
@@ -233,6 +236,9 @@
 
 @end
 
+@interface NewStatusCellController <UITextFieldDelegate>
+
+@end
 
 @implementation NewStatusCellController
 - (void)didMount {
