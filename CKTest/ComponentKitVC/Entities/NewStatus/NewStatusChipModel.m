@@ -11,11 +11,11 @@
 @implementation NewStatusChipModel
 - (instancetype)initWithImage:(NSString *)imageName
                          text:(NSString *)text
-               backgroundColor:(UIColor *)backgroundColor {
+              foregroundColor:(UIColor *)foregroundColor {
   if (self = [super init]) {
     _imageName = [imageName copy];
     _text = [text copy];
-    _backgroundColor = backgroundColor ?: [UIColor colorWithWhite:0.95 alpha:1.0];
+    _foregroundColor = foregroundColor ?: [UIColor colorWithWhite:0.95 alpha:1.0];
   }
   return self;
 }

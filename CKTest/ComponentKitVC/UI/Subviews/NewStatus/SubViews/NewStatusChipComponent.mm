@@ -9,6 +9,7 @@
 #import "NewStatusChipComponent.h"
 #import "NewStatusChipModel.h"
 #import "ImageCell.h"
+#import "UIColor+Hex.h"
 
 @implementation NewStatusChipComponent
 {
@@ -24,7 +25,7 @@
         CKImageComponent
         newWithImage:img
         attributes:{
-            { @selector(setTintColor:), model.backgroundColor }
+            { @selector(setTintColor:), model.foregroundColor }
         }
         size:{.width = 16, .height = 16}] : nil;
     
@@ -33,7 +34,7 @@
     [CKLabelComponent newWithLabelAttributes:{
         .string = model.text ?: @"",
         .font   = [UIFont systemFontOfSize:13 weight:UIFontWeightSemibold],
-        .color  = [UIColor blackColor],
+        .color  = [UIColor whiteColor],
         
     }
                               viewAttributes:{
@@ -49,54 +50,59 @@
                                   style: {
         .direction = CKStackLayoutDirectionHorizontal,
         .alignItems = CKStackLayoutAlignItemsCenter,
-        .spacing = 6 }
+        .spacing = 4 }
                                children:{
         {image},
         {label},
     }];
-//    
-//    CKComponentViewConfiguration backgroundView = {
-//        
-//    };
     
     CKComponentViewConfiguration invisibleBackground = {
         [UIView class],
         {{@selector(setBackgroundColor:), [UIColor clearColor]}}
     };
     
-    CKComponent *padded = [CKBackgroundLayoutComponent
-                           newWithComponent:[CKInsetComponent
-                                             newWithInsets:{.top=8,.left=12,.bottom=8,.right=12}
-                                             component:row]
-                           background: [CKComponent
-                                        newWithView: {
-        [UIView class],
-        {
-            {@selector(setBackgroundColor:), [UIColor blueColor]},
-            {CKComponentViewAttribute::LayerAttribute(@selector(setCornerRadius:)), @(12.0)}
+    CKComponent *padded = [
+        CKBackgroundLayoutComponent
+        newWithComponent:[
+            CKInsetComponent
+            newWithInsets:{
+                .top=10,.left=16,.bottom=10,.right=16
+            }
+            component:row
+        ]
+        background: [
+            CKComponent
+            newWithView: {
+                [UIView class],
+                {
+                    {@selector(setBackgroundColor:), [UIColor colorWithHexString: @"#37393A"]},
+                    {CKComponentViewAttribute::LayerAttribute(@selector(setCornerRadius:)), @(18.0)}
+                }
+            }
+            size:{
+                .width = CKRelativeDimension::Auto(),
+                .height = CKRelativeDimension::Auto(),
+            }
+        ]
+    ];
+    
+    
+    
+    CKComponent *overlay = [
+        CKComponent
+        newWithView: {
+            [UIView class],
+            {CKComponentTapGestureAttribute(@selector(_handleTap:))}
         }
-    }
-                                        size:{
-        .width = CKRelativeDimension::Auto(),
-        .height = CKRelativeDimension::Auto(),
-    }]];
-    
-    
-    
-    CKComponent *overlay = [CKComponent
-                            newWithView: {
-        [UIView class],
-        {CKComponentTapGestureAttribute(@selector(_handleTap:))}
-    }
-                            size:{
-        .width = CKRelativeDimension::Auto(),
-        .height = CKRelativeDimension::Auto(),
-    }];
+        size:{
+            .width = CKRelativeDimension::Auto(),
+            .height = CKRelativeDimension::Auto(),
+        }
+    ];
     
     CKComponent *totalCombine = [CKOverlayLayoutComponent
                                  newWithComponent:padded
-                                 overlay: overlay
-    ];
+                                 overlay: overlay];
     
     auto component = [super newWithComponent:totalCombine];
     component->_action = action;
@@ -104,7 +110,7 @@
     return component;
 }
 
-- (void)_handleTap:(CKComponent *)sender {
+- (void)_handleTap:(NewStatusChipModel *)model {
     _action.send(self, _model);
 }
 

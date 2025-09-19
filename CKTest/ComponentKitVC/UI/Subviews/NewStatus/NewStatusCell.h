@@ -21,7 +21,7 @@
 
 @interface NewStatusCell : CKCompositeComponent
 + (instancetype) newWithModel: (CellModel *) model;
-- (void)scopeActionMethod:(NewStatusChipModel *)chip;
+- (void)didTapChip:(NewStatusChipModel *)chip;
 @end
 
 

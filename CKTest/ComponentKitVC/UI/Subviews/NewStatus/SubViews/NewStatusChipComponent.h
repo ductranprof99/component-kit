@@ -13,6 +13,6 @@
 @interface NewStatusChipComponent : CKCompositeComponent
 + (instancetype)newWithModel:(NewStatusChipModel *)model
                       action:(const CKTypedComponentAction<NewStatusChipModel *> &)action;
-- (void)_handleTap:(CKComponent *)sender;
+- (void)_handleTap:(NewStatusChipModel *)model;
 
 @end

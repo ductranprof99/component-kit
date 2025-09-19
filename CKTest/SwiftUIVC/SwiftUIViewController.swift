@@ -32,7 +32,9 @@ class SwiftUIViewController: UIViewController {
             hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
-
+        
+        let tf = UITextField()
+        
         hostingController.didMove(toParent: self)
     }
 }
