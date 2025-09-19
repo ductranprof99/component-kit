@@ -25,7 +25,6 @@ class SwiftUIViewController: UIViewController {
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingController.view)
-
         // Constrain the hosting controller’s view to fill its parent
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),

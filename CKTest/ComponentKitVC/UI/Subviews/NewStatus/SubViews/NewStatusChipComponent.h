@@ -10,7 +10,7 @@
 
 @class NewStatusChipModel;
 
-@interface NewStatusChipComponentScopeAction : CKCompositeComponent
+@interface NewStatusChipComponent : CKCompositeComponent
 + (instancetype)newWithModel:(NewStatusChipModel *)model
                       action:(const CKTypedComponentAction<NewStatusChipModel *> &)action;
 - (void)_handleTap:(CKComponent *)sender;

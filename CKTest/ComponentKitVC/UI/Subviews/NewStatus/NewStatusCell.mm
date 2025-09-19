@@ -10,7 +10,7 @@
 #import "CellModel.h"
 #import "AppImageDownloader.h"
 #import "NewStatusChipModel.h"
-#import "NewStatusChipComponentScopeAction.h"
+#import "NewStatusChipComponent.h"
 
 @interface NewStatusCellState ()
 @property (nonatomic, strong) NSArray<NewStatusChipModel *> *chips;
@@ -68,14 +68,16 @@
     ];
 
     // Sample chip models (replace with real data when wiring with model/state)
-    NewStatusChipModel *c1 = [[NewStatusChipModel alloc] initWithImage:@"photo" text:@"Ảnh" backgroundColor:[UIColor colorWithRed:0.93 green:0.96 blue:1.0 alpha:1.0]];
-    NewStatusChipModel *c2 = [[NewStatusChipModel alloc] initWithImage:@"video" text:@"Video" backgroundColor:[UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.0]];
-    NewStatusChipModel *c3 = [[NewStatusChipModel alloc] initWithImage:@"paperclip" text:@"File" backgroundColor:[UIColor colorWithRed:0.96 green:0.94 blue:1.0 alpha:1.0]];
+    NewStatusChipModel *c1 = [[NewStatusChipModel alloc] initWithImage:@"newstatus.photo" text:@"Ảnh" backgroundColor:[UIColor colorWithRed:0.93 green:0.96 blue:1.0 alpha:1.0]];
+    NewStatusChipModel *c2 = [[NewStatusChipModel alloc] initWithImage:@"newstatus.video" text:@"Video" backgroundColor:[UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.0]];
+    NewStatusChipModel *c3 = [[NewStatusChipModel alloc] initWithImage:@"newstatus.file" text:@"File" backgroundColor:[UIColor colorWithRed:0.96 green:0.94 blue:1.0 alpha:1.0]];
 
-    CKComponent *scopeActionChip = [NewStatusChipComponentScopeAction
+    CKComponent *scopeActionChip = [NewStatusChipComponent
                                     newWithModel:c1
                                     action: {scope, @selector(scopeActionMethod:)}];
-//    CKComponent *chip2 = [NewStatusChipComponent newWithModel:c2 onTap:onChipTap];
+    CKComponent *discorageActionChip = [NewStatusChipComponent
+                          newWithModel:c2
+                          action: { @selector(scopeActionMethod:)}];
 //    CKComponent *chip3 = [NewStatusChipComponent newWithModel:c3 onTap:onChipTap];
     
     CKComponent *bottomStack = [
@@ -93,7 +95,7 @@
         }
         children:{
             {scopeActionChip},
-//            {chip2},
+            {discorageActionChip},
 //            {chip3},
         }
     ];

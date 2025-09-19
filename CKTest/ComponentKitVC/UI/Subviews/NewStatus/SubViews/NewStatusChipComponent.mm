@@ -6,11 +6,11 @@
 //
 
 
-#import "NewStatusChipComponentScopeAction.h"
+#import "NewStatusChipComponent.h"
 #import "NewStatusChipModel.h"
 #import "ImageCell.h"
 
-@implementation NewStatusChipComponentScopeAction
+@implementation NewStatusChipComponent
 {
   CKTypedComponentAction<NewStatusChipModel *> _action; // store typed action
   NewStatusChipModel *_model;
@@ -20,15 +20,25 @@
                       action:(const CKTypedComponentAction<NewStatusChipModel *> &)action
 {
     UIImage *img = [UIImage imageNamed:model.imageName ?: @""];
-    CKComponent *image = img ? [CKImageComponent newWithImage:img attributes:{} size:{.width = 16, .height = 16}] : nil;
+    CKComponent *image = img ? [
+        CKImageComponent
+        newWithImage:img
+        attributes:{
+            { @selector(setTintColor:), model.backgroundColor }
+        }
+        size:{.width = 16, .height = 16}] : nil;
+    
     
     CKComponent *label =
     [CKLabelComponent newWithLabelAttributes:{
         .string = model.text ?: @"",
         .font   = [UIFont systemFontOfSize:13 weight:UIFontWeightSemibold],
         .color  = [UIColor blackColor],
+        
     }
-                              viewAttributes:{}
+                              viewAttributes:{
+        {@selector(setBackgroundColor:), [UIColor clearColor]},
+    }
                                         size:{}];
     
     // Chip view; we forward the tap with the typed payload (model, index)
@@ -44,10 +54,34 @@
         {image},
         {label},
     }];
+//    
+//    CKComponentViewConfiguration backgroundView = {
+//        
+//    };
     
-    CKComponent *padded =
-    [CKInsetComponent newWithInsets:{.top=8,.left=12,.bottom=8,.right=12}
-                          component:row];
+    CKComponentViewConfiguration invisibleBackground = {
+        [UIView class],
+        {{@selector(setBackgroundColor:), [UIColor clearColor]}}
+    };
+    
+    CKComponent *padded = [CKBackgroundLayoutComponent
+                           newWithComponent:[CKInsetComponent
+                                             newWithInsets:{.top=8,.left=12,.bottom=8,.right=12}
+                                             component:row]
+                           background: [CKComponent
+                                        newWithView: {
+        [UIView class],
+        {
+            {@selector(setBackgroundColor:), [UIColor blueColor]},
+            {CKComponentViewAttribute::LayerAttribute(@selector(setCornerRadius:)), @(12.0)}
+        }
+    }
+                                        size:{
+        .width = CKRelativeDimension::Auto(),
+        .height = CKRelativeDimension::Auto(),
+    }]];
+    
+    
     
     CKComponent *overlay = [CKComponent
                             newWithView: {
