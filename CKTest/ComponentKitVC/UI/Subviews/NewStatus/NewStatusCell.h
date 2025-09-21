@@ -9,6 +9,7 @@
 
 @class CellModel;
 @class NewStatusChipModel;
+@class CustomTextView;
 
 @interface NewStatusCellState: NSObject
 @property (nonatomic, copy) NSString *text;
@@ -22,8 +23,8 @@
 @interface NewStatusCell : CKCompositeComponent
 + (instancetype) newWithModel: (CellModel *) model;
 - (void)didTapChip:(NewStatusChipModel *)chip;
-- (void)onReturnText:(NSString *)onReturnText;
-- (void)onEndEditingText:(NSString *)onEndEditingText;
+- (void)onEndEditingText:(CustomTextView *)tv
+          withText:(NSString *)tv2;
 @end
 
 

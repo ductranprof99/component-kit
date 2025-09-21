@@ -46,8 +46,7 @@ namespace std {}
 + (instancetype)newWithModel:(CellModel *)model {
     CKComponentScope scope(self);
     
-    const CKTypedComponentAction<NSString *> onReturn = {scope, @selector(onReturnText:)};
-    const CKTypedComponentAction<NSString *> onEndEditing = {scope, @selector(onEndEditingText:)};
+    const CKTypedComponentAction<NSString *> onEndEditing = {scope, @selector(onEndEditingText:withText:)};
     
     CKComponentViewConfiguration backgroundView = {
         [UIView class],
@@ -73,7 +72,9 @@ namespace std {}
         }
         children:{
             {
-                [NewStatusCell topStackWithCellModel:model onReturn:onReturn onEndEditing:onEndEditing]
+                [NewStatusCell
+                 topStackWithCellModel:model
+                 onEndEditing:onEndEditing]
             },
             {
                 [NewStatusCell bottomStackwithAction:action]
@@ -84,7 +85,8 @@ namespace std {}
     return [super newWithComponent:full];
 }
 
-+ (CKComponent *)topStackWithCellModel: (CellModel *)model onReturn:(const CKTypedComponentAction<NSString *> &)onReturn onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing {
++ (CKComponent *)topStackWithCellModel: (CellModel *)model
+                          onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing {
     CKComponentViewConfiguration invisibleBackground = {
         [UIView class],
         {{@selector(setBackgroundColor:), [UIColor clearColor]}}
@@ -150,7 +152,7 @@ namespace std {}
         font:[UIFont systemFontOfSize:16 weight:UIFontWeightRegular]
         textColor:[UIColor whiteColor]
         backgroundColor:[UIColor clearColor]
-        onReturn:onReturn
+        onReturn:nil
         onEndEditing:onEndEditing
     ];
     
@@ -258,12 +260,9 @@ namespace std {}
     // TODO: forward event to delegate or post notification as needed
 }
 
-- (void) onReturnText:(NSString *)returnText {
-    NSLog(@"End edit text");
-}
-
-- (void) onEndEditingText:(NSString *)returnText {
-    NSLog(@"End edit text");
+- (void)onEndEditingText:(CustomTextView *)tv
+                 withText:(NSString *)tv2 {
+    NSLog(@"End edit text: %@", tv2);
 }
 
 @end
@@ -280,11 +279,4 @@ namespace std {}
     [super didUnmount];
 }
 
-- (void)onReturnText:(NSString *)text {
-    NSLog(@"[NewStatusCellController] Return: %@", text);
-}
-
-- (void)onEndEditingText:(NSString *)text {
-    NSLog(@"[NewStatusCellController] EndEditing: %@", text);
-}
 @end

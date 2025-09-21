@@ -23,6 +23,8 @@
                            onReturn:(const CKTypedComponentAction<NSString *> &)onReturn
                        onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing;
 
+- (NSString *) getCurrentString;
+
 @end
 
 

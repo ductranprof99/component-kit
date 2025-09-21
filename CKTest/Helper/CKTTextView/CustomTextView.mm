@@ -64,6 +64,10 @@
 - (UIColor *)textColorValue { return _textColor; }
 - (UIColor *)backgroundColorValue { return _backgroundColor; }
 
+- (NSString *)getCurrentString {
+    return _text;
+}
+
 @end
 
 #pragma mark - Controller
@@ -128,7 +132,9 @@
         CustomTextView *ctv = (CustomTextView *)self.component;
         if (ctv) {
             CKTypedComponentAction<NSString *> action = [ctv onReturnAction];
-            action.send(ctv, textView.text ?: @"");
+            if (action) {
+              action.send(ctv, textView.text ?: @"");
+            }
         }
         [textView resignFirstResponder];
         return NO; // prevent newline
@@ -140,8 +146,11 @@
 {
     CustomTextView *ctv = (CustomTextView *)self.component;
     if (ctv) {
+//        CKComponentActionSend(<#const CKTypedComponentAction<id> &action#>, <#CKComponent *sender#>, <#id context#>)
         CKTypedComponentAction<NSString *> action = [ctv onEndEditingAction];
-        action.send(ctv, textView.text ?: @"");
+        if (action) {
+          action.send(ctv, textView.text ?: @"");
+        }
     }
 }
 
