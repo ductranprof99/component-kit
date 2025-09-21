@@ -22,6 +22,8 @@
 @interface NewStatusCell : CKCompositeComponent
 + (instancetype) newWithModel: (CellModel *) model;
 - (void)didTapChip:(NewStatusChipModel *)chip;
+- (void)onReturnText:(NSString *)onReturnText;
+- (void)onEndEditingText:(NSString *)onEndEditingText;
 @end
 
 

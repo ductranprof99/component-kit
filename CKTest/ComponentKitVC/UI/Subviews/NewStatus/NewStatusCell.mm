@@ -14,6 +14,9 @@
 #import "UIColor+Hex.h"
 #import "AppImageDownloader.h"
 #import <vector>
+#import "CustomTextView.h"
+
+namespace std {}
 
 @interface NewStatusCellState ()
 @property (nonatomic, strong) NSArray<NewStatusChipModel *> *chips;
@@ -43,6 +46,8 @@
 + (instancetype)newWithModel:(CellModel *)model {
     CKComponentScope scope(self);
     
+    const CKTypedComponentAction<NSString *> onReturn = {scope, @selector(onReturnText:)};
+    const CKTypedComponentAction<NSString *> onEndEditing = {scope, @selector(onEndEditingText:)};
     
     CKComponentViewConfiguration backgroundView = {
         [UIView class],
@@ -68,7 +73,7 @@
         }
         children:{
             {
-                [NewStatusCell topStackWithCellModel:model]
+                [NewStatusCell topStackWithCellModel:model onReturn:onReturn onEndEditing:onEndEditing]
             },
             {
                 [NewStatusCell bottomStackwithAction:action]
@@ -79,7 +84,7 @@
     return [super newWithComponent:full];
 }
 
-+ (CKComponent *)topStackWithCellModel: (CellModel *)model {
++ (CKComponent *)topStackWithCellModel: (CellModel *)model onReturn:(const CKTypedComponentAction<NSString *> &)onReturn onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing {
     CKComponentViewConfiguration invisibleBackground = {
         [UIView class],
         {{@selector(setBackgroundColor:), [UIColor clearColor]}}
@@ -111,30 +116,45 @@
             
         } component:imgViewAsync
     ];
+
+//    std::vector<SEL> selectors = {
+//      @selector(textFieldDidEndEditing:),
+//      @selector(textFieldShouldReturn:)
+//    };
+//
+//    CKComponent *textView = [
+//        CKComponent
+//        newWithView:{[UITextField class], {
+//
+//            {@selector(setText:), @"email"},
+//            {
+//
+//                CKComponentDelegateAttribute(@selector(setDelegate:), std::move(selectors))
+//            }
+//
+//        }}
+//        size:{
+//            .width = CKRelativeDimension::Points(50),
+//            .height = CKRelativeDimension::Points(50),
+//        }
+//    ];
     
     CKComponent *textView = [
-        CKComponent
-        newWithView:{[UITextField class], {
-            
-            {@selector(setText:), @"email"},
-//            std::vector<SEL> vectors;
-//            vectors.put
-            
-            CKComponentDelegateAttribute(@selector(setDelegate:), {
-                @selector(textFieldDidEndEditing:),
-                @selector(textFieldShouldReturn:),
-            })
-        }}
-        size:{
-            .width = CKRelativeDimension::Points(50),
-            .height = CKRelativeDimension::Percent(1),
+        CustomTextView
+        newWithPlaceholder: @"k"
+        text: @"asdfasdf"
+        size: {
+            .width = CKRelativeDimension::Points(100),
+            .height = CKRelativeDimension::Points(100),
         }
+        onReturn:onReturn
+        onEndEditing:onEndEditing
     ];
     
     CKComponent *topStack = [
         CKStackLayoutComponent
         newWithView: invisibleBackground
-        size:{
+        size: {
             .width = CKRelativeDimension::Auto(),
             .height = CKRelativeDimension::Auto(),
         }
@@ -143,7 +163,7 @@
             .alignItems = CKStackLayoutAlignItemsStart,
             .spacing = CGFloat(20)
         }
-        children:{
+        children: {
             {
                 imgView
             },
@@ -233,10 +253,13 @@
     // TODO: forward event to delegate or post notification as needed
 }
 
+- (void) onReturnText:(NSString *)returnText {
+    NSLog(@"End edit text");
+}
 
-@end
-
-@interface NewStatusCellController <UITextFieldDelegate>
+- (void) onEndEditingText:(NSString *)returnText {
+    NSLog(@"End edit text");
+}
 
 @end
 
@@ -250,5 +273,13 @@
 - (void)didUnmount {
     // Cleanup before the view goes away
     [super didUnmount];
+}
+
+- (void)onReturnText:(NSString *)text {
+    NSLog(@"[NewStatusCellController] Return: %@", text);
+}
+
+- (void)onEndEditingText:(NSString *)text {
+    NSLog(@"[NewStatusCellController] EndEditing: %@", text);
 }
 @end
