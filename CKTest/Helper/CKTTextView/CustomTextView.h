@@ -16,9 +16,12 @@
 /// The view instance is kept across rebuilds; callbacks are delivered via typed actions.
 + (instancetype)newWithPlaceholder:(NSString *)placeholder
                               text:(NSString *)text
-                              size:(CKComponentSize) size
-                          onReturn:(const CKTypedComponentAction<NSString *> &)onReturn
-                      onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing;
+                              size: (CKComponentSize) size
+                               font:(UIFont *)font
+                           textColor:(UIColor *)textColor
+                     backgroundColor:(UIColor *)backgroundColor
+                           onReturn:(const CKTypedComponentAction<NSString *> &)onReturn
+                       onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing;
 
 @end
 

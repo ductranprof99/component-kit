@@ -16,6 +16,9 @@
 {
     NSString *_placeholder;
     NSString *_text;
+    UIFont *_font;
+    UIColor *_textColor;
+    UIColor *_backgroundColor;
     CKTypedComponentAction<NSString *> _onReturn;
     CKTypedComponentAction<NSString *> _onEndEditing;
 }
@@ -23,6 +26,9 @@
 - (CKTypedComponentAction<NSString *>)onEndEditingAction;
 - (NSString *)placeholderValue;
 - (NSString *)initialTextValue;
+- (UIFont *)fontValue;
+- (UIColor *)textColorValue;
+- (UIColor *)backgroundColorValue;
 @end
 #pragma mark - Component
 
@@ -30,14 +36,20 @@
 + (instancetype)newWithPlaceholder:(NSString *)placeholder
                               text:(NSString *)text
                               size: (CKComponentSize) size
-                          onReturn:(const CKTypedComponentAction<NSString *> &)onReturn
-                      onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing
+                               font:(UIFont *)font
+                           textColor:(UIColor *)textColor
+                     backgroundColor:(UIColor *)backgroundColor
+                           onReturn:(const CKTypedComponentAction<NSString *> &)onReturn
+                       onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing
 {
     CKComponentScope scope(self);
     CustomTextView *c = (CustomTextView *)[super newWithSize:size accessibility:{}];
     if (c) {
         c-> _placeholder = [placeholder copy];
         c-> _text = [text copy];
+        c->_font = font;
+        c->_textColor = textColor;
+        c->_backgroundColor = backgroundColor;
         c-> _onReturn = onReturn;
         c-> _onEndEditing = onEndEditing;
     }
@@ -48,6 +60,9 @@
 - (CKTypedComponentAction<NSString *>)onEndEditingAction { return _onEndEditing; }
 - (NSString *)placeholderValue { return _placeholder; }
 - (NSString *)initialTextValue { return _text; }
+- (UIFont *)fontValue { return _font; }
+- (UIColor *)textColorValue { return _textColor; }
+- (UIColor *)backgroundColorValue { return _backgroundColor; }
 
 @end
 
@@ -69,6 +84,12 @@
 {
     UITextView *tv = (UITextView *)statefulView;
     CustomTextView *ctv = (CustomTextView *)component;
+    UIFont *font = [ctv fontValue];
+    UIColor *tc = [ctv textColorValue];
+    UIColor *bg = [ctv backgroundColorValue];
+    if (font) tv.font = font;
+    if (tc) tv.textColor = tc;
+    if (bg) tv.backgroundColor = bg;
     // Only apply text if different, and avoid clobbering user typing.
     if (!tv.isFirstResponder) {
         NSString *desired = [ctv initialTextValue] ?: @"";

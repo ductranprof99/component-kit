@@ -141,12 +141,15 @@ namespace std {}
     
     CKComponent *textView = [
         CustomTextView
-        newWithPlaceholder: @"k"
-        text: @"asdfasdf"
-        size: {
-            .width = CKRelativeDimension::Points(100),
-            .height = CKRelativeDimension::Points(100),
+        newWithPlaceholder:@""
+        text:@"asdfasdf"
+        size:{
+            .width = CKRelativeDimension::Percent(1),
+            .height = CKRelativeDimension::Points(50),
         }
+        font:[UIFont systemFontOfSize:16 weight:UIFontWeightRegular]
+        textColor:[UIColor whiteColor]
+        backgroundColor:[UIColor clearColor]
         onReturn:onReturn
         onEndEditing:onEndEditing
     ];
@@ -155,7 +158,7 @@ namespace std {}
         CKStackLayoutComponent
         newWithView: invisibleBackground
         size: {
-            .width = CKRelativeDimension::Auto(),
+            .width = CKRelativeDimension::Percent(1),
             .height = CKRelativeDimension::Auto(),
         }
         style: {
@@ -168,7 +171,9 @@ namespace std {}
                 imgView
             },
             {
-                textView
+                .component = textView,
+                .flexGrow = 1,
+                .flexShrink = 1
             }
         }
     ];
