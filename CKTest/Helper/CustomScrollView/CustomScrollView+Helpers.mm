@@ -8,9 +8,9 @@
 #import "CustomScrollView.h"
 
 #pragma mark - Helpers
-inline CKComponentFlexibleSizeRangeProvider *
-CSVMakeSizeRangeProvider(CSVScrollAxis axis)
-{
+inline CKComponentFlexibleSizeRangeProvider *CSVMakeSizeRangeProvider(
+    CSVScrollAxis axis
+) {
     const CKComponentSizeRangeFlexibility flex =
     (axis == CSVScrollAxisVertical)
     ? CKComponentSizeRangeFlexibleHeight   // fixed width, flexible height
@@ -18,11 +18,11 @@ CSVMakeSizeRangeProvider(CSVScrollAxis axis)
     return [CKComponentFlexibleSizeRangeProvider providerWithFlexibility:flex];
 }
 
-CKComponentHostingView *
-CSVInstallHostingViewIfNeeded(UIScrollView *sv,
-                              id<CKComponentHostingViewDelegate> delegate,
-                              CSVScrollAxis axis)
-{
+CKComponentHostingView *CSVInstallHostingViewIfNeeded(
+    UIScrollView *sv,
+    id<CKComponentHostingViewDelegate> delegate,
+    CSVScrollAxis axis
+) {
     CKComponentHostingView *hosting =
     (CKComponentHostingView *)objc_getAssociatedObject(sv, kHostingViewKey);
     NSNumber *storedAxis = (NSNumber *)objc_getAssociatedObject(sv, kAxisKey);

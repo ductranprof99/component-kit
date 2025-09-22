@@ -74,7 +74,41 @@
         onScroll:{}
     ];
     
-    return [super newWithComponent:scrollable];
+    CKComponent *padding = [
+        CKInsetComponent
+        newWithInsets:{
+            
+        }
+        component: [
+            CKStackLayoutComponent
+            newWithView:{}
+            size:{}
+            style:{
+                .direction = CKStackLayoutDirectionVertical,
+                .spacing = 10,
+                .alignItems = CKStackLayoutAlignItemsCenter,
+            }
+            children: {
+                {
+                    [
+                      CKLabelComponent
+                      newWithLabelAttributes: {
+                          .string = @"Khoảnh khắc",
+                          .font = [UIFont systemFontOfSize:14 weight: UIFontWeightBold],
+                          .color = [UIColor whiteColor]
+                      }
+                      viewAttributes:{ }
+                      size:{ }
+                    ]
+                },
+                {
+                    
+                }
+            }
+        ]
+    ];
+    
+    return [super newWithComponent:padding];
 }
 
 - (void)didTap:(UITapGestureRecognizer *)gr {
