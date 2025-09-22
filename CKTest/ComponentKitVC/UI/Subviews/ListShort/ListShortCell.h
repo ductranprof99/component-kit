@@ -12,7 +12,6 @@
 #import "AppImageDownloader.h"
 
 @class CellModel;
-@class CellContext;
 
 @interface ListShortCellState: NSObject
 @property (nonatomic, readonly) BOOL isExpand;
@@ -21,8 +20,7 @@
 @end
 
 @interface ListShortCell : CKCompositeComponent
-+ (instancetype) newWithData: (CellModel *) model
-                     context: (CellContext *) context;
++ (instancetype) newWithData: (CellModel *) model;
 @end
 
 

@@ -11,6 +11,7 @@
 #import "CellModelType.h"
 #import "ImageCell.h"
 #import "NewStatusCell.h"
+#import "ListShortCell.h"
 
 @implementation WrapperComponent
 {
@@ -50,6 +51,9 @@
     switch (model.cellType) {
         case CellModelTypeNewStatus:
             body = [NewStatusCell newWithModel:model];
+            break;
+        case CellModelTypeShortList:
+            body = [ListShortCell newWithData:model];
             break;
         case CellModelTypeUserPost:
             body = [CKStackLayoutComponent

@@ -5,10 +5,10 @@
 //  Created by Duc Tran on 21/9/25.
 //
 
-#import <ComponentKit/CKStatefulViewComponent.h>
-#import <ComponentKit/ComponentKit.h>
 #import <UIKit/UIKit.h>
+#import <ComponentKit/CKStatefulViewComponent.h>
 #import <ComponentKit/CKStatefulViewComponentController.h>
+#import <ComponentKit/CKComponentAction.h>
 
 @interface CustomTextView : CKStatefulViewComponent
 
@@ -22,8 +22,6 @@
                      backgroundColor:(UIColor *)backgroundColor
                            onReturn:(const CKTypedComponentAction<NSString *> &)onReturn
                        onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing;
-
-- (NSString *) getCurrentString;
 
 @end
 

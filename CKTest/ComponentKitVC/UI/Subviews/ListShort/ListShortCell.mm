@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "CellModel.h"
 #import "AppImageDownloader.h"
+#import "CustomScrollView.h"
+#import "ShortItemComponent.h"
 
 @implementation ListShortCellState
 
@@ -28,47 +30,51 @@
 }
 
 
-+ (instancetype)newWithData:(CellModel *)model
-                    context:(CellContext *)context {
-    NSURL *url = [NSURL URLWithString:  @"https://picsum.photos/400/300?1"];
++ (instancetype)newWithData:(CellModel *)model {
     CKComponentScope scope(self);
     const ListShortCellState *state = scope.state();
     
-    CKComponent *imgViewAsync = [CKNetworkImageComponent
-                                 newWithURL: url
-                                 imageDownloader: [[AppImageDownloader alloc] init]
-                                 size: {
-        .width = CKRelativeDimension::Percent(1),
-        .height = CKRelativeDimension::Auto(),
-        .minHeight = state.isExpand  == 0 ? 100 : state.isExpand  == 1 ? 200 : 300,
-        .maxHeight = 420
+    // Build "short" items from model.listShortURL (array of NSString*)
+    NSArray<NSString *> *shorts = [model.listShortURL isKindOfClass:[NSArray class]] ? model.listShortURL : @[];
+    
+    std::vector<CKStackLayoutComponentChild> children;
+    children.reserve(shorts.count);
+    for (NSString *s in shorts) {
+        CKComponent *item = [ShortItemComponent newWithURLString:s];
+        children.push_back({ .component = item });
     }
-                                 options: {
-        
-    }
-                                 attributes: {
-        {@selector(setContentMode:), @(UIViewContentModeScaleAspectFill)},
-        {@selector(setClipsToBounds:), @(YES)},
-        {@selector(setUserInteractionEnabled:), @(YES)},
-    }
+    
+    // Horizontal row of shorts
+    CKComponent *row = [
+        CKStackLayoutComponent
+        newWithView:{}
+        size:{}
+        style:{
+            .direction = CKStackLayoutDirectionHorizontal,
+            .spacing = 1,
+            .alignItems = CKStackLayoutAlignItemsCenter,
+        }
+        children:children];
+    
+    // Wrap in a horizontal CustomScrollView (SwiftUI List-equivalent)
+    CKComponent *scrollable = [
+        CustomScrollView
+        newWithSize:{
+            .width = CKRelativeDimension::Percent(1),
+            .height = CKRelativeDimension::Auto(),
+            .minHeight = 160,
+            .maxHeight = 260
+        }
+        axis:CSVScrollAxisHorizontal
+        contentInsets:UIEdgeInsetsMake(0, 12, 0, 12)
+        showsVerticalScrollIndicator:NO
+        showsHorizontalScrollIndicator:NO
+        bounces:YES
+        content:row
+        onScroll:{}
     ];
     
-    
-    CKComponent *overlay = [CKComponent
-                            newWithView: {
-        [UIView class],
-        {CKComponentTapGestureAttribute(@selector(didTap:))}
-    }
-                            size:{
-        .width = CKRelativeDimension::Auto(),
-        .height = CKRelativeDimension::Auto(),
-    }];
-    
-    CKComponent *totalCombine = [CKOverlayLayoutComponent newWithComponent:imgViewAsync
-                 overlay: overlay
-    ];
-    
-    return [super newWithComponent:totalCombine];
+    return [super newWithComponent:scrollable];
 }
 
 - (void)didTap:(UITapGestureRecognizer *)gr {

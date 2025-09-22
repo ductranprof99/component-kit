@@ -130,8 +130,22 @@ NSArray *cellListData(void)
     dispatch_once(&onceToken, ^{
         NSMutableArray *mutableData = [NSMutableArray array];
 
-        // 1) New Status (static cell)
+        // 1.1) New Status (static cell + shortlist)
         [mutableData addObject:@{ @"type": @(CellModelTypeNewStatus) }];
+        
+        // 1.2) Short list
+        [mutableData addObject:@{
+            @"type": @(CellModelTypeShortList),
+            @"listShortURL": @[
+//                @"https://short.url/a",
+//                @"https://short.url/b",
+//                @"https://short.url/c"
+                
+                @"https://picsum.photos/400/300?1",
+                @"https://picsum.photos/400/300?2",
+                @"https://picsum.photos/400/300?3"
+            ]
+        }];
 
         // 2.1) Normal user posts
         for (NSInteger i = 0; i < 3; i++) {
@@ -207,17 +221,8 @@ NSArray *cellListData(void)
             ]
         }];
 
-        // 4) Short list
-        [mutableData addObject:@{
-            @"type": @(CellModelTypeShortList),
-            @"listShortURL": @[
-                @"https://short.url/a",
-                @"https://short.url/b",
-                @"https://short.url/c"
-            ]
-        }];
-
-        // 5) Recommend video
+       
+        // 4) Recommend video
         [mutableData addObject:@{
             @"type": @(CellModelTypeRecomendationVideo),
             @"recommendVideoURL": @[

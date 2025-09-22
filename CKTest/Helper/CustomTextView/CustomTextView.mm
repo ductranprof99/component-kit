@@ -6,9 +6,6 @@
 //
 
 #import "CustomTextView.h"
-#import <UIKit/UIKit.h>
-#import <ComponentKit/CKStatefulViewComponentController.h>
-#import <ComponentKit/CKComponentAction.h>
 
 #pragma mark - Component Private Interface
 
@@ -63,11 +60,6 @@
 - (UIFont *)fontValue { return _font; }
 - (UIColor *)textColorValue { return _textColor; }
 - (UIColor *)backgroundColorValue { return _backgroundColor; }
-
-- (NSString *)getCurrentString {
-    return _text;
-}
-
 @end
 
 #pragma mark - Controller
