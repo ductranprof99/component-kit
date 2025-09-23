@@ -11,6 +11,7 @@
 #import "AppImageDownloader.h"
 #import "CustomScrollView.h"
 #import "ShortItemComponent.h"
+#import "UIColor+Hex.h"
 
 @implementation ListShortCellState
 
@@ -77,7 +78,10 @@
     CKComponent *padding = [
         CKInsetComponent
         newWithInsets:{
-            
+            .top = 10,
+            .left = 10,
+            .right = 10,
+            .bottom = 10
         }
         component: [
             CKStackLayoutComponent
@@ -102,13 +106,30 @@
                     ]
                 },
                 {
-                    
+                    scrollable
                 }
             }
         ]
     ];
     
-    return [super newWithComponent:padding];
+    CKComponent *background = [CKComponent
+                            newWithView: {
+        [UIView class],
+        {
+            {@selector(setBackgroundColor:), [UIColor colorWithHexString: @"#37393A"]},
+        }
+    } size:{
+        .width = CKRelativeDimension::Auto(),
+        .height = CKRelativeDimension::Auto(),
+    }];
+    
+    CKComponent *finalise = [
+        CKBackgroundLayoutComponent
+        newWithComponent: padding
+        background: background
+    ];
+    
+    return [super newWithComponent:finalise];
 }
 
 - (void)didTap:(UITapGestureRecognizer *)gr {
