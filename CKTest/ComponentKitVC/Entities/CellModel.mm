@@ -29,12 +29,16 @@ CellModel *CellModelFromDict(NSDictionary *dict) {
     if (typeNum) {
         model.cellType = (CellModelType)[typeNum integerValue];
     }
+    NSNumber *subTypeNum = dict[@"subType"];
+    if (subTypeNum) {
+        model.userPostType = (UserPostType)[subTypeNum integerValue];
+    } else {
+        model.userPostType = UserPostTypeNone;
+    }
 
     switch (model.cellType) {
-        case CellModelTypeNewStatus: {
-            // 1) Static cell – do nothing
-        } break;
-
+        case CellModelTypeNewStatus:
+            break;
         case CellModelTypeUserPost: {
             // 2) User post variants
             // Common meta
@@ -42,63 +46,67 @@ CellModel *CellModelFromDict(NSDictionary *dict) {
             NSArray *comments = dict[@"comments"]; if ([comments isKindOfClass:[NSArray class]]) model.comments = comments;
             NSString *userName = dict[@"userName"]; if (userName) model.userName = userName;
             NSString *avatarURL = dict[@"userAvatarURL"]; if ([avatarURL isKindOfClass:[NSString class]] && avatarURL.length > 0) model.userAvatarURL = avatarURL;
-
-            // 2.2 Video post: must have videoURL
-            id videoVal = dict[@"videoURL"];
-            if (videoVal) {
-                if ([videoVal isKindOfClass:[NSURL class]]) {
-                    model.videoURL = (NSURL *)videoVal;
-                } else if ([videoVal isKindOfClass:[NSString class]]) {
-                    model.videoURL = [NSURL URLWithString:(NSString *)videoVal];
-                }
-            }
-
-            // 2.3 Image post: must have multiple images (1..n)
-            NSArray *images = dict[@"images"]; // array of URL strings
-            if ([images isKindOfClass:[NSArray class]] && images.count > 0) {
-                model.listImageURL = images;
-            }
-
-            // 2.1 Normal post text
+            
             NSString *text = dict[@"text"]; if (text) model.cellTextDescription = text;
-        } break;
-
-        case CellModelTypeChangeAvatar: {
-            NSString *name = dict[@"userName"]; if (name) model.userName = name;
-            NSString *avatar = dict[@"userAvatarURL"]; if ([avatar isKindOfClass:[NSString class]] && avatar.length > 0) model.userAvatarURL = avatar;
-
-            // Dedicated cell type in case caller sets it directly
-            NSString *updatedAvatar = dict[@"userUpdatedAvatar"];
-            if (updatedAvatar && updatedAvatar.length > 0) {
-                model.userUpdatedAvatar = updatedAvatar;
-            } else if (model.userAvatarURL) {
-                model.userUpdatedAvatar = model.userAvatarURL;
-            }
-        } break;
-
-        case CellModelTypeUserRepost: {
-            NSString *rpName = dict[@"userName"]; if (rpName) model.userName = rpName;
-            NSString *rpAvatar = dict[@"userAvatarURL"]; if ([rpAvatar isKindOfClass:[NSString class]] && rpAvatar.length > 0) model.userAvatarURL = rpAvatar;
-
-            // 3) Repost: Must have >= 1 subpost
-            NSArray *subpostsArr = dict[@"subPosts"]; // array of dicts
-            if ([subpostsArr isKindOfClass:[NSArray class]] && subpostsArr.count > 0) {
-                NSMutableArray<SubPost *> *subs = [NSMutableArray arrayWithCapacity:subpostsArr.count];
-                for (NSDictionary *sp in subpostsArr) {
-                    if (![sp isKindOfClass:[NSDictionary class]]) continue;
-                    SubPost *s = [SubPost new];
-                    id likeCount = sp[@"likeCount"]; if (likeCount) s.likeCount = likeCount;
-                    NSString *userName = sp[@"userName"]; if (userName) s.userName = userName;
-                    NSString *spAvatar = sp[@"userAvatarURL"]; if ([spAvatar isKindOfClass:[NSString class]] && spAvatar.length > 0) s.userAvatarURL = spAvatar;
-                    // userAvatarURL is readonly; assume it is provided via KVC-compliant backing ivar or ignored for now
-                    [subs addObject:s];
+            
+            switch (model.userPostType) {
+                case UserPostTypeNone:
+                    break;
+                case UserPostTypeVideo:
+                {
+                    id videoVal = dict[@"videoURL"];
+                    if (videoVal) {
+                        if ([videoVal isKindOfClass:[NSURL class]]) {
+                            model.videoURL = (NSURL *)videoVal;
+                        } else if ([videoVal isKindOfClass:[NSString class]]) {
+                            model.videoURL = [NSURL URLWithString:(NSString *)videoVal];
+                        }
+                    }
                 }
-                model.subPosts = subs;
-            } else {
-                model.subPosts = @[]; // keep empty to signal invalid/mock gap
+                    break;
+                case UserPostTypeNormal:
+                {
+                    NSArray *images = dict[@"images"]; // array of URL strings
+                    if ([images isKindOfClass:[NSArray class]] && images.count > 0) {
+                        model.listImageURL = images;
+                    }
+                }
+                    break;
+                case UserPostTypeUpdateAvatar:
+                {
+                    // Dedicated cell type in case caller sets it directly
+                    NSString *updatedAvatar = dict[@"userUpdatedAvatar"];
+                    if (updatedAvatar && updatedAvatar.length > 0) {
+                        model.userUpdatedAvatar = updatedAvatar;
+                    } else if (model.userAvatarURL) {
+                        model.userUpdatedAvatar = model.userAvatarURL;
+                    }
+                }
+                    break;
+                case UserPostTypeRepost:
+                {
+                    NSArray *subpostsArr = dict[@"subPosts"]; // array of dicts
+                    if ([subpostsArr isKindOfClass:[NSArray class]] && subpostsArr.count > 0) {
+                        NSMutableArray<SubPost *> *subs = [NSMutableArray arrayWithCapacity:subpostsArr.count];
+                        for (NSDictionary *sp in subpostsArr) {
+                            if (![sp isKindOfClass:[NSDictionary class]]) continue;
+                            SubPost *s = [SubPost new];
+                            id likeCount = sp[@"likeCount"]; if (likeCount) s.likeCount = likeCount;
+                            NSString *userName = sp[@"userName"]; if (userName) s.userName = userName;
+                            NSString *spAvatar = sp[@"userAvatarURL"]; if ([spAvatar isKindOfClass:[NSString class]] && spAvatar.length > 0) s.userAvatarURL = spAvatar;
+                            // userAvatarURL is readonly; assume it is provided via KVC-compliant backing ivar or ignored for now
+                            [subs addObject:s];
+                        }
+                        model.subPosts = subs;
+                    } else {
+                        model.subPosts = @[]; // keep empty to signal invalid/mock gap
+                    }
+                }
+                    break;
             }
-        } break;
-
+           
+        }
+            break;
         case CellModelTypeShortList: {
             // 4) Short list: Must have list short URL (array of strings)
             NSArray *shorts = dict[@"listShortURL"];
@@ -159,6 +167,7 @@ NSArray *cellListData(void)
         for (NSInteger i = 0; i < 3; i++) {
             [mutableData addObject:@{
                 @"type": @(CellModelTypeUserPost),
+                @"subType": @(UserPostTypeNormal),
                 @"text": [NSString stringWithFormat:@"Normal post #%ld: hello world!", (long)i],
                 @"likeCount": @(10 + i),
                 @"comments": @[
@@ -174,6 +183,7 @@ NSArray *cellListData(void)
         for (NSInteger i = 0; i < 2; i++) {
             [mutableData addObject:@{
                 @"type": @(CellModelTypeUserPost),
+                @"subType": @(UserPostTypeVideo),
                 @"videoURL": [NSString stringWithFormat:@"https://example.com/video_%ld.mp4", (long)i],
                 @"likeCount": @(100 + i),
                 @"comments": @[],
@@ -186,6 +196,7 @@ NSArray *cellListData(void)
         for (NSInteger i = 0; i < 2; i++) {
             [mutableData addObject:@{
                 @"type": @(CellModelTypeUserPost),
+                @"subType": @(UserPostTypeNormal),
                 @"images": @[
                     @"https://picsum.photos/400/300?1",
                     @"https://picsum.photos/400/300?2",
@@ -199,21 +210,23 @@ NSArray *cellListData(void)
 
         // 2.4) Change avatar posts
         [mutableData addObject:@{
-                    @"type": @(CellModelTypeChangeAvatar),
+                    @"type": @(CellModelTypeUserPost),
        @"userUpdatedAvatar":@"https://picsum.photos/200/200?avatar",
                 @"userName": @"john",
            @"userAvatarURL": @"https://picsum.photos/40/40?u=change"
         }];
         
         [mutableData addObject:@{
-            @"type": @(CellModelTypeChangeAvatar),
+            @"type": @(CellModelTypeUserPost),
+            @"subType": @(UserPostTypeUpdateAvatar),
             @"userName": @"john",
             @"userAvatarURL": @"https://picsum.photos/40/40?u=change2"
         }]; // fallback to current avatar
 
         // 3) Repost: with >= 1 subpost
         [mutableData addObject:@{
-            @"type": @(CellModelTypeUserRepost),
+            @"type": @(CellModelTypeUserPost),
+            @"subType": @(UserPostTypeRepost),
             @"userName": @"anna",
             @"userAvatarURL": @"https://picsum.photos/40/40?u=repost",
             @"subPosts": @[

@@ -17,7 +17,7 @@
 }
 
 
-+ (instancetype)newWithData:(CellModel *)model {
++ (instancetype)newWithModel:(CellModel *)model {
     
     CKComponent *scrollView = [
         ListShortSubComponent

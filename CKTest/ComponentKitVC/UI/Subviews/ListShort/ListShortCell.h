@@ -11,5 +11,5 @@
 #import "ShortItemComponent.h"
 
 @interface ListShortCell : CKCompositeComponent
-+ (instancetype) newWithData: (CellModel *) model;
++ (instancetype) newWithModel: (CellModel *) model;
 @end

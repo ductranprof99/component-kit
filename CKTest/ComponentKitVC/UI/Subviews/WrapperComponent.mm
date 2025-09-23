@@ -12,6 +12,7 @@
 #import "ImageCell.h"
 #import "NewStatusCell.h"
 #import "ListShortCell.h"
+#import "UserPostCell.h"
 
 @implementation WrapperComponent
 {
@@ -53,28 +54,10 @@
             body = [NewStatusCell newWithModel:model];
             break;
         case CellModelTypeShortList:
-            body = [ListShortCell newWithData:model];
+            body = [ListShortCell newWithModel:model];
             break;
         case CellModelTypeUserPost:
-            body = [CKStackLayoutComponent
-                 newWithView: kWhiteBackgroundView
-                 size:{}
-                 style:{
-                    .direction = CKStackLayoutDirectionVertical,
-                }
-                 children:{
-                    {
-                        header
-                    },
-                    {
-                        [ImageCell newWithData:model
-                                       context: nil]
-                    },
-                    {
-                        footer
-                    },
-                }];
-            
+            body = [UserPostCell newWithModel:model];
             break;
         default:
             CKComponent *backgroundComponent = [

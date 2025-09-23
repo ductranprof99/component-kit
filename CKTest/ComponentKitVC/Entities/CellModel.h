@@ -20,6 +20,7 @@
 // main character
 @property (atomic) NSString* uuidString;
 @property (nonatomic) CellModelType cellType;
+@property (nonatomic) UserPostType userPostType;
 
 // user post
 @property (nonatomic, copy) NSString *cellTextDescription;

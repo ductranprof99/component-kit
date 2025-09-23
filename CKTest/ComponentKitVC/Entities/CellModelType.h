@@ -11,8 +11,14 @@ typedef NS_ENUM(NSInteger, CellModelType) {
     CellModelTypeNewStatus,
     CellModelTypeUserPost,
     CellModelTypeRecomendationVideo,
-    CellModelTypeChangeAvatar,
-    CellModelTypeUserRepost,
     CellModelTypeShortList,
+};
+
+typedef NS_ENUM(NSInteger, UserPostType) {
+    UserPostTypeNone, // for nothing value bro
+    UserPostTypeVideo,
+    UserPostTypeNormal,
+    UserPostTypeUpdateAvatar,
+    UserPostTypeRepost
 };
 
