@@ -11,6 +11,8 @@
 /// Dumb “short” tile (thumbnail) component.
 /// Model: URL string for the image.
 @interface ShortItemComponent : CKCompositeComponent
-+ (instancetype)newWithItem: (ListShortCellShortItem *) item;
++ (instancetype)newWithItem: (ListShortCellShortItem *) item
+                     action: (const CKTypedComponentAction<ListShortCellShortItem *> &) action;
+- (void) didTap;
 @end
 

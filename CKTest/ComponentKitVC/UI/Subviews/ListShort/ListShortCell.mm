@@ -7,74 +7,21 @@
 
 #import "ListShortCell.h"
 #import <UIKit/UIKit.h>
-#import "AppImageDownloader.h"
-#import "CustomScrollView.h"
-#import "ShortItemComponent.h"
+#import "ListShortSubComponent.h"
 #import "UIColor+Hex.h"
 
 
 @implementation ListShortCell
 + (id)initialState {
-    return [[ListShortCellModel alloc] initWithItems: @[]];
+    return [ListShortCellModel initWithItems: @[]];
 }
 
 
 + (instancetype)newWithData:(CellModel *)model {
-    NSArray<NSString *> *shorts = [model.listShortURL isKindOfClass:[NSArray class]] ? model.listShortURL : @[];
     
-    NSMutableArray<ListShortCellShortItem *> *result = [NSMutableArray arrayWithCapacity:shorts.count + 1];
-    [result addObject:
-         [
-             ListShortCellShortItem
-             addItemWithUsername:model.userName
-             withAvatar:model.userAvatarURL
-         ]
-    ];
-    for (NSString *i in shorts) {
-        [result addObject: [ListShortCellShortItem urlItem:i]];
-    }
-    
-    CKComponentScope scope(self, model.uuidString, ^id{
-        return [[ListShortCellModel alloc] initWithItems: result.copy];
-    });
-    
-    const ListShortCellModel *state = scope.state();
-    
-    std::vector<CKStackLayoutComponentChild> children;
-    children.reserve(shorts.count);
-    for (ListShortCellShortItem *s in [state getListShort]) {
-        CKComponent *item = [ShortItemComponent newWithItem:s];
-        children.push_back({ .component = item });
-    }
-    
-    // Horizontal row of shorts
-    CKComponent *row = [
-        CKStackLayoutComponent
-        newWithView:{}
-        size:{}
-        style:{
-            .direction = CKStackLayoutDirectionHorizontal,
-            .spacing = 1,
-            .alignItems = CKStackLayoutAlignItemsCenter,
-        }
-        children:children];
-    
-    // Wrap in a horizontal CustomScrollView (SwiftUI List-equivalent)
-    CKComponent *scrollable = [
-        CustomScrollView
-        newWithSize:{
-            .width = CKRelativeDimension::Percent(1),
-            .height = CKRelativeDimension::Auto(),
-            .minHeight = 160,
-            .maxHeight = 260
-        }
-        axis:CSVScrollAxisHorizontal
-        contentInsets:UIEdgeInsetsMake(0, 12, 0, 12)
-        showsVerticalScrollIndicator:NO
-        showsHorizontalScrollIndicator:NO
-        bounces:YES
-        content:row
-        onScroll:{}
+    CKComponent *scrollView = [
+        ListShortSubComponent
+        newWithData:model
     ];
     
     CKComponent *padding = [
@@ -101,24 +48,29 @@
                         newWithLabelAttributes: {
                             .string = @"Khoảnh khắc",
                             .font = [UIFont systemFontOfSize:14 weight: UIFontWeightBold],
-                            .color = [UIColor whiteColor]
+                            .color = [UIColor whiteColor],
+                            .alignment = NSTextAlignmentLeft,
                         }
-                        viewAttributes:{ }
-                        size:{ }
+                        viewAttributes:{
+                            {@selector(setBackgroundColor:), [UIColor clearColor] }
+                        }
+                        size:{
+                            .width = CKRelativeDimension::Percent(1)
+                        }
                     ]
                 },
                 {
-                    scrollable
+                    scrollView
                 }
             }
         ]
     ];
     
     CKComponent *background = [CKComponent
-                            newWithView: {
+                               newWithView: {
         [UIView class],
         {
-            {@selector(setBackgroundColor:), [UIColor colorWithHexString: @"#37393A"]},
+            {@selector(setBackgroundColor:), [UIColor colorWithHexString: @"#242728"]},
         }
     } size:{
         .width = CKRelativeDimension::Auto(),
@@ -132,26 +84,6 @@
     ];
     
     return [super newWithComponent:finalise];
-}
-
-- (void)didTap:(UITapGestureRecognizer *)gr {
-   
-}
-
-@end
-
-@implementation ListShortCellController
-- (void)didMount {
-    [super didMount];
-}
-
-- (void)didRemount {
-    [super didRemount];
-}
-
-- (void)didUnmount {
-    // Cleanup before the view goes away
-    [super didUnmount];
 }
 
 @end

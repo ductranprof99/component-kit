@@ -84,6 +84,7 @@ showsHorizontalScrollIndicator:(BOOL)showsHorizontalIndicator
     
     // Axis/behavior
     sv.contentInset = csv.insets;
+    NSLog(@"Inset here: %@", NSStringFromUIEdgeInsets(csv.insets));
     sv.showsVerticalScrollIndicator   = csv.showsV;
     sv.showsHorizontalScrollIndicator = csv.showsH;
     sv.bounces = csv.bounces;

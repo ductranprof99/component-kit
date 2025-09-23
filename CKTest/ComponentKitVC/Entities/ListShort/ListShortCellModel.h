@@ -12,6 +12,7 @@
 @interface ListShortCellModel : NSObject
 @property (nonatomic, copy, readonly) NSArray<ListShortCellShortItem *> *listShort;
 
-- (instancetype)initWithItems:(NSArray<ListShortCellShortItem *> *)items;
++ (instancetype)initWithItems:(NSArray<ListShortCellShortItem *> *)items;
+- (void) addShortItemWithURL: (NSString *) vidURL;
 - (NSArray<ListShortCellShortItem *> *) getListShort;
 @end
