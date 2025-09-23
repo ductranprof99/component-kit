@@ -11,7 +11,7 @@
 + (instancetype)urlItem:(NSString *)url {
     ListShortCellShortItem *i = [ListShortCellShortItem new];
     [i setValue:@(ShortItemTypeURL) forKey:@"_type"];
-    [i setValue:(url.length ? url : [[NSUUID UUID] UUIDString]) forKey:@"_identifier"];
+    [i setValue:[[NSUUID UUID] UUIDString] forKey:@"_identifier"];
     [i setValue:url forKey:@"_url"];
     return i;
 }
