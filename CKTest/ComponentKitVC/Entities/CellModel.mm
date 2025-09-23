@@ -22,6 +22,7 @@
 #pragma mark - Cell Model initialie
 CellModel *CellModelFromDict(NSDictionary *dict) {
     CellModel *model = [CellModel new];
+    model.uuidString = [[NSUUID UUID] UUIDString];
 
     // Resolve type safely
     NSNumber *typeNum = dict[@"type"];
@@ -106,6 +107,11 @@ CellModel *CellModelFromDict(NSDictionary *dict) {
             } else {
                 model.listShortURL = @[];
             }
+            
+            NSString *userName = dict[@"userName"]; if (userName) model.userName = userName;
+            
+            NSString *avatarURL = dict[@"userAvatarURL"]; if ([avatarURL isKindOfClass:[NSString class]] && avatarURL.length > 0) model.userAvatarURL = avatarURL;
+           
         } break;
 
         case CellModelTypeRecomendationVideo: {
@@ -144,7 +150,9 @@ NSArray *cellListData(void)
                 @"https://picsum.photos/400/300?1",
                 @"https://picsum.photos/400/300?2",
                 @"https://picsum.photos/400/300?3"
-            ]
+            ],
+            @"userName": @"john",
+            @"userAvatarURL": @"https://picsum.photos/40/40?u=normal"
         }];
 
         // 2.1) Normal user posts

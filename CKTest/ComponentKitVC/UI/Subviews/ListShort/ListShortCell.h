@@ -9,20 +9,11 @@
 
 #import <ComponentKit/ComponentKit.h>
 #import "CellModel.h"
-#import "AppImageDownloader.h"
-
-@class CellModel;
-
-@interface ListShortCellState: NSObject
-@property (nonatomic, readonly) BOOL isExpand;
-
-- (instancetype)initWithExpaned:(NSInteger)expanded;
-@end
+#import "ListShortCellModel.h"
 
 @interface ListShortCell : CKCompositeComponent
 + (instancetype) newWithData: (CellModel *) model;
 @end
-
 
 @interface ListShortCellController : CKComponentController
 @end

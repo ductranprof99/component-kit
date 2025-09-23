@@ -7,40 +7,42 @@
 
 #import "ListShortCell.h"
 #import <UIKit/UIKit.h>
-#import "CellModel.h"
 #import "AppImageDownloader.h"
 #import "CustomScrollView.h"
 #import "ShortItemComponent.h"
 
-@implementation ListShortCellState
-
-- (instancetype)initWithExpaned:(NSInteger)expanded {
-    if ((self = [super init])) {
-        _isExpand = expanded;
-    }
-    return self;
-}
-
-@end
-
 
 @implementation ListShortCell
 + (id)initialState {
-    return [[ListShortCellState alloc] initWithExpaned: 0];
+    return [[ListShortCellModel alloc] initWithItems: @[]];
 }
 
 
 + (instancetype)newWithData:(CellModel *)model {
-    CKComponentScope scope(self);
-    const ListShortCellState *state = scope.state();
-    
-    // Build "short" items from model.listShortURL (array of NSString*)
     NSArray<NSString *> *shorts = [model.listShortURL isKindOfClass:[NSArray class]] ? model.listShortURL : @[];
+    
+    NSMutableArray<ListShortCellShortItem *> *result = [NSMutableArray arrayWithCapacity:shorts.count + 1];
+    [result addObject:
+         [
+             ListShortCellShortItem
+             addItemWithUsername:model.userName
+             withAvatar:model.userAvatarURL
+         ]
+    ];
+    for (NSString *i in shorts) {
+        [result addObject: [ListShortCellShortItem urlItem:i]];
+    }
+    
+    CKComponentScope scope(self, model.uuidString, ^id{
+        return [[ListShortCellModel alloc] initWithItems: result.copy];
+    });
+    
+    const ListShortCellModel *state = scope.state();
     
     std::vector<CKStackLayoutComponentChild> children;
     children.reserve(shorts.count);
-    for (NSString *s in shorts) {
-        CKComponent *item = [ShortItemComponent newWithURLString:s];
+    for (ListShortCellShortItem *s in [state getListShort]) {
+        CKComponent *item = [ShortItemComponent newWithItem:s];
         children.push_back({ .component = item });
     }
     
@@ -91,14 +93,14 @@
             children: {
                 {
                     [
-                      CKLabelComponent
-                      newWithLabelAttributes: {
-                          .string = @"Khoảnh khắc",
-                          .font = [UIFont systemFontOfSize:14 weight: UIFontWeightBold],
-                          .color = [UIColor whiteColor]
-                      }
-                      viewAttributes:{ }
-                      size:{ }
+                        CKLabelComponent
+                        newWithLabelAttributes: {
+                            .string = @"Khoảnh khắc",
+                            .font = [UIFont systemFontOfSize:14 weight: UIFontWeightBold],
+                            .color = [UIColor whiteColor]
+                        }
+                        viewAttributes:{ }
+                        size:{ }
                     ]
                 },
                 {
@@ -112,11 +114,7 @@
 }
 
 - (void)didTap:(UITapGestureRecognizer *)gr {
-    NSLog(@"Test sumthing wong");
-    [self updateState: ^(ListShortCellState *old) {
-        ListShortCellState *o = old;
-        return [[ListShortCellState alloc] initWithExpaned: !o.isExpand];
-    } mode: CKUpdateModeSynchronous];
+   
 }
 
 @end
@@ -124,13 +122,10 @@
 @implementation ListShortCellController
 - (void)didMount {
     [super didMount];
-    // Setup after the component’s view is mounted
-    NSLog(@"Hey hey hey");
 }
 
 - (void)didRemount {
     [super didRemount];
-    NSLog(@"This mtfk did remount");
 }
 
 - (void)didUnmount {

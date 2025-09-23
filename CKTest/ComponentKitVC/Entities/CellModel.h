@@ -18,6 +18,7 @@
 
 @interface CellModel : NSObject
 // main character
+@property (atomic) NSString* uuidString;
 @property (nonatomic) CellModelType cellType;
 
 // user post
