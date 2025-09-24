@@ -7,6 +7,7 @@
 
 #import "UserPostCell.h"
 #import "CKComponent_Ext.h"
+#import "UIColor+Hex.h"
 #import "CustomTextView.h"
 
 @implementation UserPostCell
@@ -103,21 +104,22 @@
         NSString *trimmed = [model.postText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if (trimmed.length > 0) {
             CKComponent *textComponent = [
-                    CustomTextView
-                    newWithTextAttribute: {
-                        .string = @"ádfasdfasdfhjasdjflkasjdlkfjjaskldjflkasjdlfjaskldfjlaksjdfkl;ạdlkfjalksdjfl;kạdflkajsldkfjal;ksdjfl;ạdklfajslkdfjalksjdfl;ạdlfjasldjflasjdflasjdlkfjasl;djflk;ádjlkfjsal;kdfjalksjdfl;kạdlfjasl;kdfjal;ksdjflk;ạdfl;kádlkfjals;djfl;kạdfasđkljfádfasdfasdfhjasdjflkasjdl------kạdlfjasl;kdfjal;ksdjflk;ạdfl;kádlkfjals;djfl;kạdfasđkljf----",
-                        .font = [
-                            UIFont
-                            systemFontOfSize:12
-                            weight: 0.2
-                        ],
+                CustomTextView
+                newWithTextAttribute: {
+                    .string = @"ádfasdfasdfhjasdjflkasjdlkfjjaskldjflkasjdlfjaskldfjlaksjdfkl;ạdlkfjalksdjfl;kạdflkajsldkfjal;ksdjfl;ạdklfajslkdfjalksjdfl;ạdlfjasldjflasjdflasjdlkfjasl;djflk;ádjlkfjsal;kdfjalksjdfl;kạdlfjasl;kdfjal;ksdjflk;ạdfl;kádlkfjals;djfl;kạdfasđkljfádfasdfasdfhjasdjflkasjdl------kạdlfjasl;kdfjal;ksdjflk;ạdfl;kádlkfjals;djfl;kạdfasđkljf----",
+                    .font = [
+                        UIFont
+                        systemFontOfSize:12
+                        weight: 0.2
+                    ],
                         .color = [UIColor whiteColor]
-                    }
-                    size:{
-                        .width = CKRelativeDimension::Percent(1),
-                        .height = CKRelativeDimension::Auto(),
-                    }
-                    lineLimit: 3
+                }
+                size:{
+                    .width = CKRelativeDimension::Percent(1),
+                    .height = CKRelativeDimension::Auto(),
+                    .minHeight = CKRelativeDimension::Points(50),
+                }
+                lineLimit: 3
             ];
             children.push_back({ .component = textComponent });
         }
@@ -195,12 +197,18 @@
     
     return [
         super
-        newWithComponent: [totalCombine withPadding:{
-            .top = 10,
-            .bottom = 10,
-            .left = 10,
-            .right = 10
-        }]
+        newWithComponent: [
+            [
+                totalCombine
+                withPadding:{
+                    .top = 10,
+                    .bottom = 10,
+                    .left = 10,
+                    .right = 10
+                }
+            ]
+            withBackgroundColor: [UIColor colorWithHexString: @"242728"]
+        ]
     ];
 }
 

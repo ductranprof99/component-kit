@@ -6,18 +6,26 @@
 //
 
 #import <ComponentKit/ComponentKit.h>
+#import <ComponentKit/CKStatefulViewComponent.h>
+#import <ComponentKit/CKStatefulViewComponentController.h>
 
-@interface CustomTextView : CKCompositeComponent
-+ (instancetype)newWithTextAttribute:(const CKLabelAttributes &)attributes
-                                size:(const CKComponentSize &)size
-                           lineLimit: (int) numberOfLimitLine;
+@interface CustomTextView : CKStatefulViewComponent
++ (CKComponent *)newWithTextAttribute:(const CKLabelAttributes &)attributes
+                                   size:(const CKComponentSize &)size
+                              lineLimit:(int)numberOfLimitLine;
 @end
 
 @interface CustomTextViewState: NSObject
-{
-    BOOL isExpanded;
-}
+
+@property (nonatomic, assign) BOOL hasCalculated;
+@property (nonatomic, assign) NSInteger calcId;
+@property (nonatomic, assign) CGFloat measuredHeight;
 
 + (instancetype) newWithExpanded: (BOOL) expanded;
 - (BOOL) getIsExpand;
+@end
+
+
+#pragma mark - Controller
+@interface CustomTextViewController : CKStatefulViewComponentController
 @end

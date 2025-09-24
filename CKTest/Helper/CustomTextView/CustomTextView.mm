@@ -11,87 +11,155 @@
 #import <ComponentKit/CKComponentViewConfiguration.h>
 #import <ComponentKit/CKComponentViewAttribute.h>
 #import <ComponentKit/CKComponentAction.h>
+#import <ComponentKit/CKStatefulViewComponent.h>
 
 @implementation CustomTextViewState
+{
+    BOOL isExpanded;
+}
 
 + (instancetype)newWithExpanded:(BOOL)expanded {
     auto ins = [[CustomTextViewState alloc] init];
-    ins -> isExpanded = expanded;
+    ins->isExpanded = expanded;
+    ins.hasCalculated = NO;
+    ins.calcId = 0;
+    ins.measuredHeight = 0;
     return ins;
 }
 
 - (BOOL) getIsExpand {
     return isExpanded;
 }
+- (BOOL)getHasCalculated { return self.hasCalculated; }
+- (NSInteger)getCalcId { return self.calcId; }
+- (CGFloat)getMeasuredHeight { return self.measuredHeight; }
 @end
 
 @implementation CustomTextView
+{
+    NSAttributedString *_attrString;
+    NSUInteger _lineLimit;
+    CKTypedComponentAction<NSNumber *> _onMeasured;
+    CKTypedComponentAction<id> _onClicked;
+}
+
+- (CKTypedComponentAction<NSNumber *>)onMeasured {
+    return _onMeasured;
+}
+
+- (CKTypedComponentAction<id>)onClick {
+    return _onClicked;
+}
+
+- (NSUInteger)lineLimit {
+    return _lineLimit;
+}
+
+- (NSAttributedString *)attrString { return _attrString; }
+- (BOOL)isExpandedState {
+    //    CustomTextViewState *s = (CustomTextViewState *)[self state];
+    //    return s ? [s getIsExpand] : NO;
+    return NO;
+}
 
 + (id)initialState {
     return [CustomTextViewState newWithExpanded: FALSE];
 }
 
-+ (instancetype)newWithTextAttribute:(const CKLabelAttributes &)attributes
-                                size:(const CKComponentSize &)size
-                           lineLimit: (int) numberOfLimitLine
++ (CKComponent *)newWithTextAttribute:(const CKLabelAttributes &)attributes
+                                   size:(const CKComponentSize &)size
+                              lineLimit:(int)numberOfLimitLine
 {
     CKComponentScope scope(self);
     CustomTextViewState *state = scope.state();
+    if (!state) state = [CustomTextViewState newWithExpanded:NO];
     
-    // Build NSAttributedString from CKLabelAttributes (font, color, etc.)
-    NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
-    ps.alignment = attributes.alignment;
-    ps.lineBreakMode = NSLineBreakByWordWrapping;
-    NSDictionary *baseAttrs = @{
-        NSFontAttributeName: (attributes.font ?: [UIFont systemFontOfSize:15]),
-        NSForegroundColorAttributeName: (id)(attributes.color ?: [UIColor labelColor]),
-        NSParagraphStyleAttributeName: ps
-    };
-    NSAttributedString *attr = [[NSAttributedString alloc] initWithString:(attributes.string) attributes:baseAttrs];
+    // Build attributed string once
+    NSMutableAttributedString *attr = [[NSMutableAttributedString alloc] initWithString:attributes.string ?: @""];
+    if (attributes.font)  [attr addAttribute:NSFontAttributeName value:attributes.font range:NSMakeRange(0, attr.length)];
+    if (attributes.color) [attr addAttribute:NSForegroundColorAttributeName value:attributes.color range:NSMakeRange(0, attr.length)];
     
-    // Bridge actions from the view back to this component
+    // Typed actions from this component back into itself
     const CKTypedComponentAction<NSNumber *> onMeasured = {scope, @selector(_heightDidChange:)};
-    const CKTypedComponentAction<id> onClicked = {scope, @selector(_didTapSeeMore)};
-    void (^actionBlock)(ExpandableLabelActionType, id) = ^(ExpandableLabelActionType type, id info){
-        if (type == ExpandableLabelActionClick) {
-//            CKComponentActionSend(onClicked, nil);
-        } else if (type == ExpandableLabelActionDidCalculate) {
-//            CKComponentActionSend(onMeasured, info);
-        }
-    };
+    const CKTypedComponentAction<id>        onClicked  = {scope, @selector(_didTapSeeMore:)};
     
-    CKComponent *core = [
-        CKComponent
-        newWithView: {
-            [ExpandableLabel class],
-            {
-                { @selector(setAttributedText:), attr },
-                { @selector(setMaximumLines:), (NSUInteger)MAX(1, numberOfLimitLine) },
-                { @selector(setIsExpanded:), state ? [state getIsExpand] : NO },
-                { @selector(setAction:), actionBlock },
-            }
-        }
-        size: size
-    ];
-    
-    return [super newWithComponent:core];
+    CustomTextView *c = (CustomTextView *)[super newWithSize:size accessibility:{}];
+    if (c) {
+        c->_attrString = attr;
+        c->_lineLimit  = (NSUInteger)MAX(1, numberOfLimitLine);
+        c->_onMeasured = onMeasured;
+        c->_onClicked  = onClicked;
+    }
+    return c;
 }
 
 
-- (void)_didTapSeeMore {
+- (void)_didTapSeeMore:(id)payload {
     [self updateState:^id(CustomTextViewState *s) {
         if (!s) { s = [CustomTextViewState newWithExpanded:NO]; }
-        if (s.getIsExpand) {
-            return [CustomTextViewState newWithExpanded:NO];
-        } else {
-            return [CustomTextViewState newWithExpanded:YES];
-            
-        }
+        return ({
+            BOOL nextExpanded = s.getIsExpand ? NO : YES;
+            auto ns = [CustomTextViewState newWithExpanded:nextExpanded];
+            ns.hasCalculated = s.hasCalculated;
+            ns.measuredHeight = s.measuredHeight;
+            ns.calcId = s.calcId + 1;
+            ns;
+        });
     }];
 }
 
 - (void)_heightDidChange:(NSNumber *)heightNumber {
-    (void)heightNumber;
+    [self updateState:^id(CustomTextViewState *s) {
+        if (!s) { s = [CustomTextViewState newWithExpanded:NO]; }
+        s.hasCalculated = YES;
+        s.measuredHeight = heightNumber ? heightNumber.doubleValue : 0.0;
+        s.calcId = s.calcId + 1;
+        NSLog(@"[CustomTextView] measured height = %.2f (calcId=%ld, expanded=%@)", s.measuredHeight, (long)s.calcId, [s getIsExpand] ? @"YES" : @"NO");
+        return s;
+    }];
+}
+
+@end
+
+@implementation CustomTextViewController
+
++ (UIView *)newStatefulView:(id)context
+{
+  ExpandableLabel *v = [ExpandableLabel new];
+  v.backgroundColor = [UIColor clearColor];
+  return v;
+}
+
++ (void)configureStatefulView:(UIView *)statefulView forComponent:(CKComponent *)component
+{
+    ExpandableLabel *v = (ExpandableLabel *)statefulView;
+    CustomTextView *c = (CustomTextView *)component;
+    (void)0; // no direct state access
+    if (!v || !c) return;
+    
+    v.attributedText = [c attrString];
+    v.maximumLines   = c.lineLimit;
+    v.isExpanded     = [c isExpandedState];
+    //
+    __weak CustomTextView *weakC = c;
+    v.action = ^(ExpandableLabelActionType type, id info) {
+        if (type == ExpandableLabelActionClick) {
+            //            if (weakC) { CKComponentActionSend([weakC onClick], nil); }
+        } else if (type == ExpandableLabelActionDidCalculate) {
+            //            if (weakC) { CKComponentActionSend([weakC onMeasured], info); }
+        }
+    };
+}
+
+- (void)didAcquireStatefulView:(UIView *)statefulView
+{
+  [super didAcquireStatefulView:statefulView];
+  // No-op for now; keep hook symmetry with CustomScrollView.
+}
+
+- (void)willRelinquishStatefulView:(UIView *)statefulView
+{
+  [super willRelinquishStatefulView:statefulView];
 }
 
 @end

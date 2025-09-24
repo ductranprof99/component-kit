@@ -51,17 +51,9 @@
 
 #pragma mark - ExpandableLabel
 
-typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString *drawAttributedText);
+typedef void(^AttributedTextDrawCompletion)(CGFloat height, NSAttributedString *drawAttributedText);
 
-@interface ExpandableLabel()
 
-#pragma mark - Private Properties
-@property(nonatomic,copy)NSAttributedString *clickAttributedText;
-@property(nonatomic,copy)ExpandableLabelContentView *contentView;
-@property(nonatomic)BOOL isExpanded;
-@property(nonatomic)CGRect clickArea;
-
-@end
 
 @implementation ExpandableLabel
 {
@@ -104,20 +96,48 @@ typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString
 
 
 #pragma mark - Lifecycle Method
--(void)drawRect:(CGRect)rect{
-    [super drawRect:rect];
-    
-    if (!_attributedText) {
-        return;
-    }
-    
-    [self drawTextWithCompletion:^(CGFloat height, NSAttributedString *drawAttributedText) {
-        [self addSubview:self.contentView];
-        self.contentView.frame = CGRectMake(0, 0, self.bounds.size.width, height);
-        self.contentView.attributedText = drawAttributedText;
-        
-        _action ? _action(ExpandableLabelActionDidCalculate, @(height)) : nil;
+
+- (CGSize)sizeThatFits:(CGSize)size
+{
+    if (!_attributedText) { return CGSizeMake(size.width, 0); }
+    CGFloat targetWidth = size.width > 0 ? size.width : UIScreen.mainScreen.bounds.size.width;
+
+    __block CGFloat h = 0;
+    __block NSAttributedString *drawAttr = nil;
+
+    [self drawTextForWidth:targetWidth completion:^(CGFloat height, NSAttributedString *drawAttributedText) {
+        h = height;
+        drawAttr = drawAttributedText;
     }];
+
+    self.measuredHeight = h;
+    self.lastMeasuredWidth = targetWidth;
+    self.lastDrawAttributedText = drawAttr;
+    if (self.action) { self.action(ExpandableLabelActionDidCalculate, @(h)); }
+
+    return CGSizeMake(targetWidth, h);
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    if (!_attributedText) { return; }
+
+    // Re-measure if the width changed
+    if (fabs(self.bounds.size.width - self.lastMeasuredWidth) > 0.5) {
+        (void)[self sizeThatFits:CGSizeMake(self.bounds.size.width, CGFLOAT_MAX)];
+    }
+
+    if (!self.contentView.superview) {
+        [self addSubview:self.contentView];
+    }
+    self.contentView.frame = CGRectMake(0, 0, self.bounds.size.width, self.measuredHeight);
+    self.contentView.attributedText = self.lastDrawAttributedText;
 }
 
 -(void)dealloc{
@@ -125,22 +145,34 @@ typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString
 }
 
 #pragma mark - Setters Method
--(void)setAttributedText:(NSAttributedString *)attributedText{
+- (void)setAttributedText:(NSAttributedString *)attributedText
+{
     _attributedText = attributedText;
-    
+    [self invalidateIntrinsicContentSize];
+    [self setNeedsLayout];
     [self setNeedsDisplay];
 }
 
--(void)setMaximumLines:(NSUInteger)maximumLines{
+- (void)setMaximumLines:(NSUInteger)maximumLines
+{
     _maximumLines = maximumLines;
-    
+    [self invalidateIntrinsicContentSize];
+    [self setNeedsLayout];
     [self setNeedsDisplay];
 }
 
--(void)setIsExpanded:(BOOL)isExpanded{
+- (void)setIsExpanded:(BOOL)isExpanded
+{
     _isExpanded = isExpanded;
-    
+    [self invalidateIntrinsicContentSize];
+    [self setNeedsLayout];
     [self setNeedsDisplay];
+}
+
+- (CGSize)intrinsicContentSize
+{
+    CGFloat w = self.bounds.size.width > 0 ? self.bounds.size.width : UIScreen.mainScreen.bounds.size.width;
+    return [self sizeThatFits:CGSizeMake(w, CGFLOAT_MAX)];
 }
 
 #pragma mark - Public Method
@@ -156,20 +188,31 @@ typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString
 -(void)actionGestureTapped: (UITapGestureRecognizer*)sender{
     if (CGRectContainsPoint(_clickArea, [sender locationInView:self])) {
         self.isExpanded = !_isExpanded;
-        _action ? _action(ExpandableLabelActionClick, nil) : nil;
+        [self invalidateIntrinsicContentSize];
+        [self setNeedsLayout];
+//        _action ? _action(ExpandableLabelActionClick, nil) : nil;
     }
 }
 
 #pragma mark - Private Method
--(void)drawTextWithCompletion: (HYAttributedTextDrawCompletion)completion{
-    _isExpanded
-    ? [self calculateFullTextWithCompletion:completion]
-    : [self calculatePartialTextWithCompletion:completion];
+
+- (void)drawTextForWidth:(CGFloat)width completion:(AttributedTextDrawCompletion)completion
+{
+    if (_isExpanded) {
+        [self calculateFullTextForWidth:width completion:completion];
+    } else {
+        [self calculatePartialTextForWidth:width completion:completion];
+    }
 }
 
--(void)calculateFullTextWithCompletion: (HYAttributedTextDrawCompletion)completion{
-    
-    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, self.bounds.size.width, UIScreen.mainScreen.bounds.size.height), nil);
+- (void)drawTextWithCompletion:(AttributedTextDrawCompletion)completion
+{
+    [self drawTextForWidth:self.bounds.size.width completion:completion];
+}
+
+-(void)calculateFullTextForWidth:(CGFloat)width completion:(AttributedTextDrawCompletion)completion
+{
+    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, width, UIScreen.mainScreen.bounds.size.height), nil);
     
     NSMutableAttributedString *drawAttributedText = [[NSMutableAttributedString alloc] initWithAttributedString:_attributedText];
     [drawAttributedText appendAttributedString:self.clickAttributedText];
@@ -203,14 +246,21 @@ typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString
             CGSize moreSize = CTLineGetBoundsWithOptions(moreLine, 0).size;
             CGFloat h = moreSize.height + lines.count * _lineHeightErrorDimension;
             self.clickArea = CGRectMake(w, totalHeight - h, moreSize.width, h);
+            
+            if (moreLine) CFRelease(moreLine);
         }
     }
     
     completion(totalHeight, drawAttributedText);
+    
+    if (ctFrame) CFRelease(ctFrame);
+    if (setter) CFRelease(setter);
+    if (path) CFRelease(path);
 }
 
--(void)calculatePartialTextWithCompletion: (HYAttributedTextDrawCompletion)completion{
-    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, self.bounds.size.width, UIScreen.mainScreen.bounds.size.height), nil);
+-(void)calculatePartialTextForWidth:(CGFloat)width completion:(AttributedTextDrawCompletion)completion
+{
+    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, width, UIScreen.mainScreen.bounds.size.height), nil);
     
     // CTFrameRef
     CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)_attributedText);
@@ -255,6 +305,8 @@ typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString
                     self.clickArea = CGRectMake(self.bounds.size.width-moreSize.width, totalHeight, moreSize.width, moreSize.height);
                     
                     totalHeight += [self heightForCTLine:line];
+                    
+                    if (moreLine) CFRelease(moreLine);
                     break;
                 }
             }
@@ -267,6 +319,10 @@ typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString
     }
     
     completion(totalHeight, drawAttributedText);
+    
+    if (ctFrame) CFRelease(ctFrame);
+    if (setter) CFRelease(setter);
+    if (path) CFRelease(path);
 }
 
 -(CGFloat)heightForCTLine: (CTLineRef)line{
@@ -286,12 +342,19 @@ typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString
 
 -(NSInteger)numberOfLinesForAttributtedText: (NSAttributedString*)text
                             withOriginPoint: (CGPoint)origin{
-    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, self.bounds.size.width, UIScreen.mainScreen.bounds.size.height), nil);
+    CGFloat width = self.lastMeasuredWidth > 0 ? self.lastMeasuredWidth : UIScreen.mainScreen.bounds.size.width;
+    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, width, UIScreen.mainScreen.bounds.size.height), nil);
     
     CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)text);
     CTFrameRef ctFrame = CTFramesetterCreateFrame(setter, CFRangeMake(0, text.length), path, nil);
     NSArray *lines = (NSArray*)CTFrameGetLines(ctFrame);
-    return lines.count;
+    NSInteger count = lines.count;
+    
+    if (ctFrame) CFRelease(ctFrame);
+    if (setter) CFRelease(setter);
+    if (path) CFRelease(path);
+    
+    return count;
 }
 
 
