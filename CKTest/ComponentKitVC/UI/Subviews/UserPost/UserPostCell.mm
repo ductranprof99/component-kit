@@ -10,7 +10,28 @@
 @implementation UserPostCell
 + (instancetype)newWithModel:(CellModel *)model
 {
-    //    if (model.cellType == )
+    CKComponent *userSection = [
+        CKStackLayoutComponent
+        newWithView: { }
+        size: {
+            .width = CKRelativeDimension::Percent(1),
+            .height = CKRelativeDimension::Points(20)
+        }
+        style: {
+            .direction = CKStackLayoutDirectionHorizontal,
+            .spacing = CGFloat(10),
+        }
+        children: {
+            {
+                
+            }
+        }
+    ];
+    
+    if (model.userPostType == UserPostTypeNormal) {
+        
+    }
+    
     CKComponent *placeholder = [
         CKComponent
         newWithView: {

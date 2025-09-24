@@ -27,10 +27,10 @@
     CKComponent *padding = [
         CKInsetComponent
         newWithInsets:{
-            .top = 10,
+            .top = 20,
             .left = 10,
             .right = 10,
-            .bottom = 10
+            .bottom = 20
         }
         component: [
             CKStackLayoutComponent
