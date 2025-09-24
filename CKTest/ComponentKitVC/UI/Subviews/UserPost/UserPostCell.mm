@@ -103,15 +103,9 @@
         NSString *trimmed = [model.postText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if (trimmed.length > 0) {
             CKComponent *textComponent = [
-//                .string = [model.postedDate stringDisplayToCurrent],
-//                .font = [UIFont
-//                         systemFontOfSize:12
-//                         weight: 0.2],
-//                    .color = [UIColor lightGrayColor]
-            
                     CustomTextView
                     newWithTextAttribute: {
-                        .string = model.postText,
+                        .string = @"ádfasdfasdfhjasdjflkasjdlkfjjaskldjflkasjdlfjaskldfjlaksjdfkl;ạdlkfjalksdjfl;kạdflkajsldkfjal;ksdjfl;ạdklfajslkdfjalksjdfl;ạdlfjasldjflasjdflasjdlkfjasl;djflk;ádjlkfjsal;kdfjalksjdfl;kạdlfjasl;kdfjal;ksdjflk;ạdfl;kádlkfjals;djfl;kạdfasđkljfádfasdfasdfhjasdjflkasjdl------kạdlfjasl;kdfjal;ksdjflk;ạdfl;kádlkfjals;djfl;kạdfasđkljf----",
                         .font = [
                             UIFont
                             systemFontOfSize:12
@@ -122,18 +116,8 @@
                     size:{
                         .width = CKRelativeDimension::Percent(1),
                         .height = CKRelativeDimension::Auto(),
-                        .minHeight = CKRelativeDimension::Points(100)
                     }
                     lineLimit: 3
-//                CKLabelComponent
-//                newWithLabelAttributes:{
-//                    .string = trimmed,
-//                    .font = [UIFont systemFontOfSize:14 weight:0],
-//                    .color = [UIColor whiteColor],
-//                    .maximumNumberOfLines = 0
-//                }
-//                viewAttributes:{ { @selector(setBackgroundColor:), [UIColor clearColor] } }
-//                size:{}
             ];
             children.push_back({ .component = textComponent });
         }
@@ -170,7 +154,7 @@
             .height = CKRelativeDimension::Auto()
         }
         style: {
-            .direction = CKStackLayoutDirectionHorizontal,
+            .direction = CKStackLayoutDirectionVertical,
             .spacing = CGFloat(10),
         }
         children: children
@@ -192,7 +176,7 @@
             .height = CKRelativeDimension::Auto()
         }
         style: {
-            .direction = CKStackLayoutDirectionHorizontal,
+            .direction = CKStackLayoutDirectionVertical,
             .spacing = CGFloat(10),
         }
         children: {

@@ -2,26 +2,26 @@
 //  ExpandableLabel.h
 //  CKTest
 //
-//  Created by ductd on 24/9/25.
+//  An old-school expandable label that owns an inner content view which does CoreText drawing.
 //
 
 #import <UIKit/UIKit.h>
 
-#pragma mark - ExpandableLabel
-@interface ExpandableLabel : UILabel
+typedef enum : NSUInteger {
+    ExpandableLabelActionClick,
+    ExpandableLabelActionDidCalculate
+} ExpandableLabelActionType;
 
-{
-    CGFloat defaultHeight;
-    CGFloat defaultWidth;
-}
+@interface ExpandableLabelContentView: UIView
+@end
 
-@property (nonatomic, assign) CGFloat defaultHeight;
-@property (nonatomic, assign) CGFloat defaultWidth;
 
-+(instancetype)sharedLabel;
--(float)getExpandedHeight;
--(float)getExpandedWidth;
--(void)autoExpandHeight;
--(void)autoExpandWidth;
+
+@interface ExpandableLabel : UIView
+
+@property(nonatomic,copy)NSAttributedString *attributedText;
+@property(nonatomic)NSUInteger maximumLines;
+
+@property(nonatomic,copy)void(^action)(ExpandableLabelActionType type, id info);
 
 @end

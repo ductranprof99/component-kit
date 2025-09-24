@@ -6,139 +6,309 @@
 //
 
 #import "ExpandableLabel.h"
+#import <CoreText/CoreText.h>
 
+#pragma mark - ExpandableLabelContentView
+@interface ExpandableLabelContentView()
 
-@interface ExpandableLabel ()
-
-@property (nonatomic, assign) BOOL _isWidthMode;
-
-@end
-
-@interface ExpandableLabel ( fixPrivate )
-
--(void)_fitsInfiniteExpanded;
--(BOOL)_isIOS7;
--(CGSize)_calculateForIOS7;
--(CGSize)_calculateForIOS6;
+@property(copy, nonatomic)NSAttributedString *attributedText;
 
 @end
 
-@implementation ExpandableLabel ( fixPrivate )
+@implementation ExpandableLabelContentView
 
--(void)_fitsInfiniteExpanded
-{
-    [self setNumberOfLines:0];
-}
-
--(BOOL)_isIOS7
-{
-    return ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f);
-}
-
--(CGSize)_calculateForIOS7
-{
-    UIFont *_textFont = self.font;
-    if( !_textFont )
-    {
-        _textFont = [UIFont systemFontOfSize:17.0f];
+-(void)drawRect:(CGRect)rect{
+    [super drawRect:rect];
+    
+    if (!_attributedText) {
+        return;
     }
-    NSString *_text   = self.text;
-    CGSize _scopeSize = self._isWidthMode ? CGSizeMake(CGFLOAT_MAX, self.frame.size.height) : CGSizeMake(self.frame.size.width, CGFLOAT_MAX);
-    //將字串格式化為屬性字串
-    //NSAttributedString *_attributedString = [[NSAttributedString alloc] initWithString:_text];
-    //可以這麼用
-    //self.outTextView.attributedText = _attributedString;
-    //取得文字的最大範圍
-    //NSRange range = NSMakeRange(0, _attributedString.length);
-    //取得字串屬性集合
-    //NSDictionary *_textAttributes = [attrStr attributesAtIndex:0 effectiveRange:&range];
-    
-    NSDictionary *_textAttributes = @{NSFontAttributeName:_textFont};
-    //NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-    //NSStringDrawingUsesFontLeading 為計算行高時，同時參考使用行距為計算標準( 行距 = 字體大小 + 行間距 )
-    CGSize _size = [_text boundingRectWithSize:_scopeSize //用於計算限制字串繪製時所佔據的矩形塊呎吋
-                                       options:NSStringDrawingUsesLineFragmentOrigin //字串繪製時的附加計算選項
-                                    attributes:_textAttributes        //文字的屬性
-                                       context:nil].size; //包含如何調整字間距與縮放，可為 nil
-    //一定要進位，否則會出問題
-    return CGSizeMake( ceilf(_size.width) , ceil(_size.height));
+    [self drawText];
 }
 
--(CGSize)_calculateForIOS6
-{
-    //必須給定一個固定的寬度，才能計算可變的高度
-    CGSize _toSize = self._isWidthMode ? CGSizeMake(CGFLOAT_MAX, self.frame.size.height) : CGSizeMake(self.frame.size.width, CGFLOAT_MAX);
-//    
-    CGSize size = [self.text sizeWithFont:self.font
-                        constrainedToSize:_toSize
-                            lineBreakMode:NSLineBreakByWordWrapping];
+#pragma mark - Setters Method
+-(void)setAttributedText:(NSAttributedString *)attributedText{
+    _attributedText = attributedText;
     
-//    CGSize size = [self.text boundingRectWithSize: _toSize
-//                                          options: NSStringDrawingTruncatesLastVisibleLine
-//                                       attributes: { }
-//                                          context: { };
-    return size;
+    [self setNeedsDisplay];
 }
+
+-(void)drawText{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+    CGContextTranslateCTM(context, 0, self.bounds.size.height);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    
+    CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)_attributedText);
+    
+    CTFrameRef ctFrame = CTFramesetterCreateFrame(setter, CFRangeMake(0, _attributedText.length), CGPathCreateWithRect(self.bounds, nil), NULL);
+    
+    CTFrameDraw(ctFrame, context);
+}
+
+@end
+
+
+#pragma mark - ExpandableLabel
+
+typedef void(^HYAttributedTextDrawCompletion)(CGFloat height, NSAttributedString *drawAttributedText);
+
+@interface ExpandableLabel()
+
+#pragma mark - Private Properties
+@property(nonatomic,copy)NSAttributedString *clickAttributedText;
+@property(nonatomic,copy)ExpandableLabelContentView *contentView;
+@property(nonatomic)BOOL isExpanded;
+@property(nonatomic)CGRect clickArea;
 
 @end
 
 @implementation ExpandableLabel
-
-@synthesize defaultHeight = _defaultHeight;
-@synthesize defaultWidth  = _defaultWidth;
-
-+(instancetype)sharedLabel
 {
-    static dispatch_once_t pred;
-    static ExpandableLabel *_object = nil;
-    dispatch_once(&pred, ^{
-        _object = [[ExpandableLabel alloc] init];
-    });
-    return _object;
+    CGFloat _lineHeightErrorDimension; //误差值
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self)
+#pragma mark - Initial Method
+-(instancetype)initWithFrame:(CGRect)frame{
+    if (self = [super initWithFrame:frame])
     {
-        _defaultHeight = CGFLOAT_MIN;
-        _defaultWidth  = CGFLOAT_MAX;
+        [self initData];
+        
+        [self setupUI];
     }
     return self;
 }
 
-#pragma --mark Public Methods
--(float)getExpandedHeight
-{
-    self._isWidthMode = NO;
-    CGSize size = [self _isIOS7] ? [self _calculateForIOS7] : [self _calculateForIOS6];
-    return (CGFloat) MAX(size.height, _defaultHeight);
+-(instancetype)initWithCoder:(NSCoder *)aDecoder{
+    if (self = [super initWithCoder:aDecoder])
+    {
+        [self initData];
+        
+        [self setupUI];
+    }
+    return self;
 }
 
--(float)getExpandedWidth
-{
-    self._isWidthMode = YES;
-    CGSize size = [self _isIOS7] ? [self _calculateForIOS7] : [self _calculateForIOS6];
-    return (CGFloat) MIN(size.width, _defaultWidth);
+-(void)setupUI{
+    self.backgroundColor = [UIColor clearColor];
+    
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionGestureTapped:)]];
 }
 
--(void)autoExpandHeight
-{
-    self._isWidthMode = NO;
-    [self _fitsInfiniteExpanded];
-    CGRect _frame      = self.frame;
-    _frame.size.height = [self getExpandedHeight];
-    [self setFrame:_frame];
+-(void)initData{
+    _lineHeightErrorDimension = 0.5;
+    _maximumLines = 3;
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(actionNotificationReceived:) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
--(void)autoExpandWidth
-{
-    self._isWidthMode = YES;
-    [self _fitsInfiniteExpanded];
-    CGRect _frame      = self.frame;
-    _frame.size.width  = [self getExpandedWidth];
-    [self setFrame:_frame];
+
+#pragma mark - Lifecycle Method
+-(void)drawRect:(CGRect)rect{
+    [super drawRect:rect];
+    
+    if (!_attributedText) {
+        return;
+    }
+    
+    [self drawTextWithCompletion:^(CGFloat height, NSAttributedString *drawAttributedText) {
+        [self addSubview:self.contentView];
+        self.contentView.frame = CGRectMake(0, 0, self.bounds.size.width, height);
+        self.contentView.attributedText = drawAttributedText;
+        
+        _action ? _action(ExpandableLabelActionDidCalculate, @(height)) : nil;
+    }];
 }
 
+-(void)dealloc{
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+#pragma mark - Setters Method
+-(void)setAttributedText:(NSAttributedString *)attributedText{
+    _attributedText = attributedText;
+    
+    [self setNeedsDisplay];
+}
+
+-(void)setMaximumLines:(NSUInteger)maximumLines{
+    _maximumLines = maximumLines;
+    
+    [self setNeedsDisplay];
+}
+
+-(void)setIsExpanded:(BOOL)isExpanded{
+    _isExpanded = isExpanded;
+    
+    [self setNeedsDisplay];
+}
+
+#pragma mark - Public Method
+
+
+#pragma mark - Action Method
+-(void)actionNotificationReceived: (NSNotification*)sender{
+    if ([sender.name isEqualToString:UIDeviceOrientationDidChangeNotification]) {
+        self.isExpanded = _isExpanded;
+    }
+}
+
+-(void)actionGestureTapped: (UITapGestureRecognizer*)sender{
+    if (CGRectContainsPoint(_clickArea, [sender locationInView:self])) {
+        self.isExpanded = !_isExpanded;
+        _action ? _action(ExpandableLabelActionClick, nil) : nil;
+    }
+}
+
+#pragma mark - Private Method
+-(void)drawTextWithCompletion: (HYAttributedTextDrawCompletion)completion{
+    _isExpanded
+    ? [self calculateFullTextWithCompletion:completion]
+    : [self calculatePartialTextWithCompletion:completion];
+}
+
+-(void)calculateFullTextWithCompletion: (HYAttributedTextDrawCompletion)completion{
+    
+    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, self.bounds.size.width, UIScreen.mainScreen.bounds.size.height), nil);
+    
+    NSMutableAttributedString *drawAttributedText = [[NSMutableAttributedString alloc] initWithAttributedString:_attributedText];
+    [drawAttributedText appendAttributedString:self.clickAttributedText];
+    
+    // CTFrameRef
+    CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)drawAttributedText);
+    CTFrameRef ctFrame = CTFramesetterCreateFrame(setter, CFRangeMake(0, drawAttributedText.length), path, NULL);
+    
+    // CTLines
+    NSArray *lines = (NSArray*)CTFrameGetLines(ctFrame);
+    
+    CGFloat totalHeight = 0;
+    
+    for (int i=0; i<lines.count; i++) {
+        CTLineRef line = (__bridge CTLineRef)lines[i];
+        totalHeight += [self heightForCTLine:line];
+        
+        if (i == lines.count - 1) {
+            CTLineRef moreLine = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)self.clickAttributedText);
+            
+            NSArray *runs = (NSArray*)CTLineGetGlyphRuns(line);
+            CGFloat w = 0;
+            for (int i=0; i<runs.count; i++) {
+                if (i == runs.count - 1) {
+                    break;
+                }
+                CTRunRef run = (__bridge CTRunRef)runs[i];
+                w += CTRunGetTypographicBounds(run, CFRangeMake(0, 0), NULL, NULL, NULL);
+            }
+            
+            CGSize moreSize = CTLineGetBoundsWithOptions(moreLine, 0).size;
+            CGFloat h = moreSize.height + lines.count * _lineHeightErrorDimension;
+            self.clickArea = CGRectMake(w, totalHeight - h, moreSize.width, h);
+        }
+    }
+    
+    completion(totalHeight, drawAttributedText);
+}
+
+-(void)calculatePartialTextWithCompletion: (HYAttributedTextDrawCompletion)completion{
+    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, self.bounds.size.width, UIScreen.mainScreen.bounds.size.height), nil);
+    
+    // CTFrameRef
+    CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)_attributedText);
+    CTFrameRef ctFrame = CTFramesetterCreateFrame(setter, CFRangeMake(0, _attributedText.length), path, NULL);
+    
+    // CTLines
+    NSArray *lines = (NSArray*)CTFrameGetLines(ctFrame);
+    
+    // CTLine Origins
+    CGPoint origins[lines.count];
+    CTFrameGetLineOrigins(ctFrame, CFRangeMake(0, 0), origins);
+    CGFloat totalHeight = 0;
+    
+    NSMutableAttributedString *drawAttributedText = [NSMutableAttributedString new];
+    
+    for (int i=0; i<lines.count; i++) {
+        if (lines.count > _maximumLines && i == _maximumLines) {
+            break;
+        }
+        CTLineRef line = (__bridge CTLineRef)lines[i];
+        
+        CGPoint lineOrigin = origins[i];
+        
+        CFRange range = CTLineGetStringRange(line);
+        NSAttributedString *subAttr = [_attributedText attributedSubstringFromRange:NSMakeRange(range.location, range.length)];
+        if (lines.count > _maximumLines && i == _maximumLines - 1) {
+            NSMutableAttributedString *drawAttr = [[NSMutableAttributedString alloc] initWithAttributedString:subAttr];
+            
+            for (int j=0; j<drawAttr.length; j++) {
+                NSMutableAttributedString *lastLineAttr = [[NSMutableAttributedString alloc] initWithAttributedString:[drawAttr attributedSubstringFromRange:NSMakeRange(0, drawAttr.length-j)]];
+                
+                [lastLineAttr appendAttributedString:self.clickAttributedText];
+                
+                NSInteger number = [self numberOfLinesForAttributtedText:lastLineAttr withOriginPoint:lineOrigin];
+                
+                if (number == 1) {
+                    [drawAttributedText appendAttributedString:lastLineAttr];
+                    
+                    CTLineRef moreLine = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)self.clickAttributedText);
+                    CGSize moreSize = CTLineGetBoundsWithOptions(moreLine, 0).size;
+                    
+                    self.clickArea = CGRectMake(self.bounds.size.width-moreSize.width, totalHeight, moreSize.width, moreSize.height);
+                    
+                    totalHeight += [self heightForCTLine:line];
+                    break;
+                }
+            }
+        }
+        else{
+            [drawAttributedText appendAttributedString:subAttr];
+            
+            totalHeight += [self heightForCTLine:line];
+        }
+    }
+    
+    completion(totalHeight, drawAttributedText);
+}
+
+-(CGFloat)heightForCTLine: (CTLineRef)line{
+    CGFloat h = 0;
+    
+    NSArray *runs = (NSArray*)CTLineGetGlyphRuns(line);
+    for (int i=0; i<runs.count; i++) {
+        CTRunRef run = (__bridge CTRunRef)runs[i];
+        CGFloat ascent;
+        CGFloat descent;
+        CGFloat leading;
+        CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &ascent, &descent, &leading);
+        h = MAX(h, ascent + descent + leading);
+    }
+    return h + _lineHeightErrorDimension;
+}
+
+-(NSInteger)numberOfLinesForAttributtedText: (NSAttributedString*)text
+                            withOriginPoint: (CGPoint)origin{
+    CGPathRef path = CGPathCreateWithRect(CGRectMake(0, 0, self.bounds.size.width, UIScreen.mainScreen.bounds.size.height), nil);
+    
+    CTFramesetterRef setter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)text);
+    CTFrameRef ctFrame = CTFramesetterCreateFrame(setter, CFRangeMake(0, text.length), path, nil);
+    NSArray *lines = (NSArray*)CTFrameGetLines(ctFrame);
+    return lines.count;
+}
+
+
+#pragma mark - Getters Method
+-(NSAttributedString *)clickAttributedText{
+    return _isExpanded
+    ? [[NSAttributedString alloc] initWithString:@"thu gọn" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:14], NSForegroundColorAttributeName: [UIColor orangeColor]}]
+    : [[NSAttributedString alloc] initWithString:@"...xem thêm" attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:14], NSForegroundColorAttributeName: [UIColor orangeColor]}];
+}
+
+-(ExpandableLabelContentView *)contentView{
+    if (!_contentView) {
+        ExpandableLabelContentView *v = [ExpandableLabelContentView new];
+        v.backgroundColor = [UIColor clearColor];
+        
+        _contentView = v;
+    }
+    return _contentView;
+}
 @end
