@@ -49,12 +49,26 @@
     };
     NSAttributedString *attr = [[NSAttributedString alloc] initWithString:(attributes.string) attributes:baseAttrs];
     
+    // Bridge actions from the view back to this component
+    const CKTypedComponentAction<NSNumber *> onMeasured = {scope, @selector(_heightDidChange:)};
+    const CKTypedComponentAction<id> onClicked = {scope, @selector(_didTapSeeMore)};
+    void (^actionBlock)(ExpandableLabelActionType, id) = ^(ExpandableLabelActionType type, id info){
+        if (type == ExpandableLabelActionClick) {
+//            CKComponentActionSend(onClicked, nil);
+        } else if (type == ExpandableLabelActionDidCalculate) {
+//            CKComponentActionSend(onMeasured, info);
+        }
+    };
+    
     CKComponent *core = [
         CKComponent
         newWithView: {
             [ExpandableLabel class],
             {
-                {@selector(setAttributedText:), attr}
+                { @selector(setAttributedText:), attr },
+                { @selector(setMaximumLines:), (NSUInteger)MAX(1, numberOfLimitLine) },
+                { @selector(setIsExpanded:), state ? [state getIsExpand] : NO },
+                { @selector(setAction:), actionBlock },
             }
         }
         size: size
@@ -62,6 +76,7 @@
     
     return [super newWithComponent:core];
 }
+
 
 - (void)_didTapSeeMore {
     [self updateState:^id(CustomTextViewState *s) {
@@ -73,6 +88,10 @@
             
         }
     }];
+}
+
+- (void)_heightDidChange:(NSNumber *)heightNumber {
+    (void)heightNumber;
 }
 
 @end
