@@ -14,6 +14,10 @@
 @property (nonatomic, copy) NSNumber *likeCount;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, readonly) NSString *userAvatarURL;
+@property (nonatomic, copy) NSArray<NSDictionary *> *comments;
+@property (nonatomic, copy) NSURL *videoURL;
+@property (nonatomic, copy) NSArray<NSString *> *listImageURL;
+@property (nonatomic, copy) NSString *postText;
 @end
 
 @interface CellModel : NSObject
@@ -23,20 +27,18 @@
 @property (nonatomic) UserPostType userPostType;
 
 // user post
-@property (nonatomic, copy) NSString *cellTextDescription;
+@property (nonatomic, copy) NSString *postText;
 @property (nonatomic, copy) NSURL *videoURL;
 @property (nonatomic, copy) NSArray<NSString *> *listImageURL;
 @property (nonatomic, copy) NSString *userUpdatedAvatar;
+@property (nonatomic, copy) NSArray<SubPost *> *subPosts;
 
 // cell utility
 @property (nonatomic, copy) NSNumber *likeCount;
 @property (nonatomic, copy) NSString *userName;
-@property (nonatomic, readonly) NSString *userAvatarURL;
 @property (nonatomic, copy) NSArray<NSDictionary *> *comments;
-@property (nonatomic, copy) NSDate *cellPostDate;
-
-// cell subpost
-@property (nonatomic, copy) NSArray<SubPost *> *subPosts;
+@property (nonatomic, copy, readwrite) NSString *userAvatarURL;
+@property (nonatomic, copy, readwrite) NSDate *postedDate;
 
 // short list + recommend video
 @property (nonatomic, copy) NSArray<NSString *> *listShortURL;

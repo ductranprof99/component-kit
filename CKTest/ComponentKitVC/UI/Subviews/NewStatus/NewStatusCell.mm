@@ -6,15 +6,7 @@
 //
 
 #import "NewStatusCell.h"
-#import <UIKit/UIKit.h>
-#import "CellModel.h"
-#import "AppImageDownloader.h"
-#import "NewStatusChipModel.h"
-#import "NewStatusChipComponent.h"
-#import "UIColor+Hex.h"
-#import "AppImageDownloader.h"
-#import <vector>
-#import "CustomTextView.h"
+
 
 namespace std {}
 
@@ -142,7 +134,7 @@ namespace std {}
 //    ];
     
     CKComponent *textView = [
-        CustomTextView
+        CustomEditTextView
         newWithPlaceholder:@""
         text:@"asdfasdf"
         size:{
@@ -260,7 +252,7 @@ namespace std {}
     // TODO: forward event to delegate or post notification as needed
 }
 
-- (void)onEndEditingText:(CustomTextView *)tv
+- (void)onEndEditingText:(CustomEditTextView *)tv
                  withText:(NSString *)tv2 {
     NSLog(@"End edit text: %@", tv2);
 }

@@ -1,149 +1,78 @@
 //
-//  CustomTextView.mm
+//  CustomTextView.m
 //  CKTest
 //
-//  Created by Duc Tran on 21/9/25.
+//  Created by ductd on 24/9/25.
 //
 
 #import "CustomTextView.h"
+#import "ExpandableLabel.h"
+#import <ComponentKit/CKComponent.h>
+#import <ComponentKit/CKComponentViewConfiguration.h>
+#import <ComponentKit/CKComponentViewAttribute.h>
+#import <ComponentKit/CKComponentAction.h>
 
-#pragma mark - Component Private Interface
+@implementation CustomTextViewState
 
-@interface CustomTextView ()
-{
-    NSString *_placeholder;
-    NSString *_text;
-    UIFont *_font;
-    UIColor *_textColor;
-    UIColor *_backgroundColor;
-    CKTypedComponentAction<NSString *> _onReturn;
-    CKTypedComponentAction<NSString *> _onEndEditing;
++ (instancetype)newWithExpanded:(BOOL)expanded {
+    auto ins = [[CustomTextViewState alloc] init];
+    ins -> isExpanded = expanded;
+    return ins;
 }
-- (CKTypedComponentAction<NSString *>)onReturnAction;
-- (CKTypedComponentAction<NSString *>)onEndEditingAction;
-- (NSString *)placeholderValue;
-- (NSString *)initialTextValue;
-- (UIFont *)fontValue;
-- (UIColor *)textColorValue;
-- (UIColor *)backgroundColorValue;
+
+- (BOOL) getIsExpand {
+    return isExpanded;
+}
 @end
-#pragma mark - Component
 
 @implementation CustomTextView
-+ (instancetype)newWithPlaceholder:(NSString *)placeholder
-                              text:(NSString *)text
-                              size: (CKComponentSize) size
-                               font:(UIFont *)font
-                           textColor:(UIColor *)textColor
-                     backgroundColor:(UIColor *)backgroundColor
-                           onReturn:(const CKTypedComponentAction<NSString *> &)onReturn
-                       onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing
+
++ (id)initialState {
+    return [CustomTextViewState newWithExpanded: FALSE];
+}
+
++ (instancetype)newWithTextAttribute:(const CKLabelAttributes &)attributes
+                                size:(const CKComponentSize &)size
+                           lineLimit: (int) numberOfLimitLine
 {
     CKComponentScope scope(self);
-    CustomTextView *c = (CustomTextView *)[super newWithSize:size accessibility:{}];
-    if (c) {
-        c-> _placeholder = [placeholder copy];
-        c-> _text = [text copy];
-        c->_font = font;
-        c->_textColor = textColor;
-        c->_backgroundColor = backgroundColor;
-        c-> _onReturn = onReturn;
-        c-> _onEndEditing = onEndEditing;
-    }
-    return c;
-}
-
-- (CKTypedComponentAction<NSString *>)onReturnAction { return _onReturn; }
-- (CKTypedComponentAction<NSString *>)onEndEditingAction { return _onEndEditing; }
-- (NSString *)placeholderValue { return _placeholder; }
-- (NSString *)initialTextValue { return _text; }
-- (UIFont *)fontValue { return _font; }
-- (UIColor *)textColorValue { return _textColor; }
-- (UIColor *)backgroundColorValue { return _backgroundColor; }
-@end
-
-#pragma mark - Controller
-
-@implementation CustomTextViewController
-
-+ (UIView *)newStatefulView:(id)context
-{
-    UITextView *tv = [UITextView new];
-    tv.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
-    tv.returnKeyType = UIReturnKeyDone;
-    tv.textContainerInset = UIEdgeInsetsMake(8, 8, 8, 8);
-    tv.scrollEnabled = YES;
-    return tv;
-}
-
-+ (void)configureStatefulView:(UIView *)statefulView forComponent:(CKComponent *)component
-{
-    UITextView *tv = (UITextView *)statefulView;
-    CustomTextView *ctv = (CustomTextView *)component;
-    UIFont *font = [ctv fontValue];
-    UIColor *tc = [ctv textColorValue];
-    UIColor *bg = [ctv backgroundColorValue];
-    if (font) tv.font = font;
-    if (tc) tv.textColor = tc;
-    if (bg) tv.backgroundColor = bg;
-    // Only apply text if different, and avoid clobbering user typing.
-    if (!tv.isFirstResponder) {
-        NSString *desired = [ctv initialTextValue] ?: @"";
-        if (![tv.text isEqualToString:desired]) {
-            tv.text = desired;
-        }
-    }
-}
-
-- (void)didAcquireStatefulView:(UIView *)statefulView
-{
-    [super didAcquireStatefulView:statefulView];
-    UITextView *tv = (UITextView *)statefulView;
-    tv.delegate = self;
-}
-
-- (void)willRelinquishStatefulView:(UIView *)statefulView
-{
-    [super willRelinquishStatefulView:statefulView];
-    UITextView *tv = (UITextView *)statefulView;
-    if (tv.delegate == self) tv.delegate = nil;
-    [tv endEditing:YES];
-}
-
-- (BOOL)canRelinquishStatefulView
-{
-    UITextView *tv = (UITextView *)self.statefulView;
-    return tv ? !tv.isFirstResponder : YES;
-}
-
-#pragma mark - UITextViewDelegate
-
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    if ([text isEqualToString:@"\n"]) {
-        CustomTextView *ctv = (CustomTextView *)self.component;
-        if (ctv) {
-            CKTypedComponentAction<NSString *> action = [ctv onReturnAction];
-            if (action) {
-              action.send(ctv, textView.text ?: @"");
+    CustomTextViewState *state = scope.state();
+    
+    // Build NSAttributedString from CKLabelAttributes (font, color, etc.)
+    NSMutableParagraphStyle *ps = [NSMutableParagraphStyle new];
+    ps.alignment = attributes.alignment;
+    ps.lineBreakMode = NSLineBreakByWordWrapping;
+    NSDictionary *baseAttrs = @{
+        NSFontAttributeName: (attributes.font ?: [UIFont systemFontOfSize:15]),
+        NSForegroundColorAttributeName: (id)(attributes.color ?: [UIColor labelColor]),
+        NSParagraphStyleAttributeName: ps
+    };
+    NSAttributedString *attr = [[NSAttributedString alloc] initWithString:(attributes.string) attributes:baseAttrs];
+    
+    CKComponent *core = [
+        CKComponent
+        newWithView: {
+            [ExpandableLabel class],
+            {
+                {@selector(setAttributedText:), attr}
             }
         }
-        [textView resignFirstResponder];
-        return NO; // prevent newline
-    }
-    return YES;
+        size: size
+    ];
+    
+    return [super newWithComponent:core];
 }
 
-- (void)textViewDidEndEditing:(UITextView *)textView
-{
-    CustomTextView *ctv = (CustomTextView *)self.component;
-    if (ctv) {
-//        CKComponentActionSend(<#const CKTypedComponentAction<id> &action#>, <#CKComponent *sender#>, <#id context#>)
-        CKTypedComponentAction<NSString *> action = [ctv onEndEditingAction];
-        if (action) {
-          action.send(ctv, textView.text ?: @"");
+- (void)_didTapSeeMore {
+    [self updateState:^id(CustomTextViewState *s) {
+        if (!s) { s = [CustomTextViewState newWithExpanded:NO]; }
+        if (s.getIsExpand) {
+            return [CustomTextViewState newWithExpanded:NO];
+        } else {
+            return [CustomTextViewState newWithExpanded:YES];
+            
         }
-    }
+    }];
 }
 
 @end

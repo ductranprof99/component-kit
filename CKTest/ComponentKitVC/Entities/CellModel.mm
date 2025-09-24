@@ -9,10 +9,10 @@
 #import "CellModelType.h"
 #import "CellModel.h"
 #import <UIKit/UIKit.h>
+#import "NSDate_Ext.h"
 
 // Make read-only avatar URLs writeable within this translation unit
 @interface CellModel ()
-@property (nonatomic, copy, readwrite) NSString *userAvatarURL;
 @end
 
 @interface SubPost ()
@@ -47,7 +47,13 @@ CellModel *CellModelFromDict(NSDictionary *dict) {
             NSString *userName = dict[@"userName"]; if (userName) model.userName = userName;
             NSString *avatarURL = dict[@"userAvatarURL"]; if ([avatarURL isKindOfClass:[NSString class]] && avatarURL.length > 0) model.userAvatarURL = avatarURL;
             
-            NSString *text = dict[@"text"]; if (text) model.cellTextDescription = text;
+            NSString *text = dict[@"text"]; if (text) model.postText = text;
+            
+            id postedVal = dict[@"postedDate"];
+            NSDate *parsedPosted = [NSDate ck_dateFromFlexible:postedVal];
+            if (parsedPosted) {
+                model.postedDate = parsedPosted;
+            }
             
             switch (model.userPostType) {
                 case UserPostTypeNone:
@@ -143,6 +149,7 @@ NSArray *cellListData(void)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSMutableArray *mutableData = [NSMutableArray array];
+        NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
 
         // 1.1) New Status (static cell + shortlist)
         [mutableData addObject:@{ @"type": @(CellModelTypeNewStatus) }];
@@ -175,7 +182,8 @@ NSArray *cellListData(void)
                     @{ @"username": @"bob",   @"comment": @"cool" }
                 ],
                 @"userName": @"john",
-                @"userAvatarURL": @"https://picsum.photos/40/40?u=normal"
+                @"userAvatarURL": @"https://picsum.photos/40/40?u=normal",
+                @"postedDate": @((i == 0) ? (now - 30) : (i == 1 ? (now - 90 * 60) : (now - 26 * 3600))),
             }];
         }
 
@@ -188,7 +196,8 @@ NSArray *cellListData(void)
                 @"likeCount": @(100 + i),
                 @"comments": @[],
                 @"userName": @"john",
-                @"userAvatarURL": @"https://picsum.photos/40/40?u=video"
+                @"userAvatarURL": @"https://picsum.photos/40/40?u=video",
+                @"postedDate": (i == 0) ? @((long long)((now - 5 * 60) * 1000.0)) : @"2023-08-15T10:00:00Z",
             }];
         }
 
@@ -204,7 +213,8 @@ NSArray *cellListData(void)
                 ],
                 @"likeCount": @(50 + i),
                 @"userName": @"john",
-                @"userAvatarURL": @"https://picsum.photos/40/40?u=image"
+                @"userAvatarURL": @"https://picsum.photos/40/40?u=image",
+                @"postedDate": (i == 0) ? @"24/09/2024" : @"1700000000",
             }];
         }
 
@@ -213,11 +223,13 @@ NSArray *cellListData(void)
                     @"type": @(CellModelTypeUserPost),
        @"userUpdatedAvatar":@"https://picsum.photos/200/200?avatar",
                 @"userName": @"john",
+                @"postedDate": @(now - 2 * 3600),
            @"userAvatarURL": @"https://picsum.photos/40/40?u=change"
         }];
         
         [mutableData addObject:@{
             @"type": @(CellModelTypeUserPost),
+            @"postedDate": @((long long)((now - 3 * 24 * 3600) * 1000.0)),
             @"subType": @(UserPostTypeUpdateAvatar),
             @"userName": @"john",
             @"userAvatarURL": @"https://picsum.photos/40/40?u=change2"
@@ -229,6 +241,7 @@ NSArray *cellListData(void)
             @"subType": @(UserPostTypeRepost),
             @"userName": @"anna",
             @"userAvatarURL": @"https://picsum.photos/40/40?u=repost",
+            @"postedDate": @(now - 10 * 60),
             @"subPosts": @[
                 @{
                     @"userName": @"mark",

@@ -6,10 +6,15 @@
 //
 
 #import <ComponentKit/ComponentKit.h>
-
-@class CellModel;
-@class NewStatusChipModel;
-@class CustomTextView;
+#import <UIKit/UIKit.h>
+#import "CellModel.h"
+#import "AppImageDownloader.h"
+#import "NewStatusChipModel.h"
+#import "NewStatusChipComponent.h"
+#import "UIColor+Hex.h"
+#import "AppImageDownloader.h"
+#import <vector>
+#import "CustomEditTextView.h"
 
 @interface NewStatusCellState: NSObject
 @property (nonatomic, copy) NSString *text;
@@ -23,7 +28,7 @@
 @interface NewStatusCell : CKCompositeComponent
 + (instancetype) newWithModel: (CellModel *) model;
 - (void)didTapChip:(NewStatusChipModel *)chip;
-- (void)onEndEditingText:(CustomTextView *)tv
+- (void)onEndEditingText:(CustomEditTextView *)tv
           withText:(NSString *)tv2;
 @end
 

@@ -2,29 +2,22 @@
 //  CustomTextView.h
 //  CKTest
 //
-//  Created by Duc Tran on 21/9/25.
+//  Created by ductd on 24/9/25.
 //
 
-#import <UIKit/UIKit.h>
-#import <ComponentKit/CKStatefulViewComponent.h>
-#import <ComponentKit/CKStatefulViewComponentController.h>
-#import <ComponentKit/CKComponentAction.h>
+#import <ComponentKit/ComponentKit.h>
 
-@interface CustomTextView : CKStatefulViewComponent
-
-/// Create a persistent UITextField wrapped by a stateful component.
-/// The view instance is kept across rebuilds; callbacks are delivered via typed actions.
-+ (instancetype)newWithPlaceholder:(NSString *)placeholder
-                              text:(NSString *)text
-                              size: (CKComponentSize) size
-                               font:(UIFont *)font
-                           textColor:(UIColor *)textColor
-                     backgroundColor:(UIColor *)backgroundColor
-                           onReturn:(const CKTypedComponentAction<NSString *> &)onReturn
-                       onEndEditing:(const CKTypedComponentAction<NSString *> &)onEndEditing;
-
+@interface CustomTextView : CKCompositeComponent
++ (instancetype)newWithTextAttribute:(const CKLabelAttributes &)attributes
+                                size:(const CKComponentSize &)size
+                           lineLimit: (int) numberOfLimitLine;
 @end
 
+@interface CustomTextViewState: NSObject
+{
+    BOOL isExpanded;
+}
 
-@interface CustomTextViewController : CKStatefulViewComponentController <UITextViewDelegate>
++ (instancetype) newWithExpanded: (BOOL) expanded;
+- (BOOL) getIsExpand;
 @end

@@ -48,6 +48,7 @@
     if (isRendered) {
         return;
     }
+    [self.collectionView setBackgroundColor:[UIColor blackColor]];
     isRendered = YES;
     const CKSizeRange sizeRange = [_sizeRangeProvider sizeRangeForBoundingSize:self.collectionView.bounds.size];
     NSSet *imageNames = [NSSet setWithObjects:
