@@ -186,6 +186,36 @@ NSArray *cellListData(void)
                 @"postedDate": @((i == 0) ? (now - 30) : (i == 1 ? (now - 90 * 60) : (now - 26 * 3600))),
             }];
         }
+        
+        for (NSInteger i = 3; i < 6; i++) {
+            // Build a random set of 1..5 image URLs
+            NSUInteger imgCount = 1 + arc4random_uniform(5); // 1..5
+            NSMutableArray<NSString *> *randImgs = [NSMutableArray arrayWithCapacity:imgCount];
+            for (NSUInteger k = 0; k < imgCount; k++) {
+                // Use a random query token to avoid caching duplicates
+                unsigned token = arc4random_uniform(1000000);
+                [randImgs addObject:[NSString stringWithFormat:@"https://picsum.photos/400/300?seed=%ld_%lu_%u", (long)i, (unsigned long)k, token]];
+            }
+
+            NSMutableDictionary *post = [@{
+                @"type": @(CellModelTypeUserPost),
+                @"subType": @(UserPostTypeNormal),
+                @"text": [NSString stringWithFormat:@"Post with image post #%ld: hello world! A string created by using format as a template into which the remaining argument values are substituted without any localization.", (long)i],
+                @"likeCount": @(10 + i),
+                @"comments": @[
+                    @{ @"username": @"alice", @"comment": @"nice!" },
+                    @{ @"username": @"bob",   @"comment": @"cool" }
+                ],
+                @"userName": @"john",
+                @"userAvatarURL": @"https://picsum.photos/40/40?u=normal",
+                @"postedDate": @((i == 0) ? (now - 30) : (i == 1 ? (now - 90 * 60) : (now - 26 * 3600))),
+            } mutableCopy];
+
+            // Insert random images
+            post[@"images"] = randImgs;
+            [mutableData addObject:post];
+        }
+
 
         // 2.2) Video posts
         for (NSInteger i = 0; i < 2; i++) {

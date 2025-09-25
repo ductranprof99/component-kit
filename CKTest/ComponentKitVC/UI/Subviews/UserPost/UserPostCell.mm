@@ -106,7 +106,7 @@
             CKComponent *t = [
                 CustomTextView
                 newWithTextAttribute: {
-                    .string = @"asdfasdfnasdnjfasdclkjasdjfjasdjfalksjdfklasjdflkajsldkfjalsdjflaskjdalksdjflkajsdlkfjalskdjflasjdlkfajsldjfalsjdflajsdlfjasldjfalksjdflaksjdlfkajsldfj-------asdfasdfasd-f-------as-df-as-d-asdfasdfasd",
+                    .string = model.postText,
                     .font = [
                         UIFont
                         systemFontOfSize:14

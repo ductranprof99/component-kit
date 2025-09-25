@@ -77,7 +77,7 @@
     [_dataSource applyChangeset:initial mode:CKUpdateModeSynchronous userInfo:nil];
     
     // Insert an initial batch of items so we actually render cells.
-    NSArray<CellModel *> *firstBatch = [_cellDataLoader fetchNextWithCount:4];
+    NSArray<CellModel *> *firstBatch = [_cellDataLoader fetchNextWithCount:10];
     NSMutableDictionary<NSIndexPath *, CellModel *> *items = [NSMutableDictionary new];
     [firstBatch enumerateObjectsUsingBlock:^(CellModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         items[[NSIndexPath indexPathForItem:idx inSection:0]] = obj;
