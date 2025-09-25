@@ -7,6 +7,9 @@
 
 #import <ComponentKit/ComponentKit.h>
 #import "ListShortCellShortItem.h"
+#import <UIKit/UIKit.h>
+#import "AppImageDownloader.h"
+#import "CKComponent_Ext.h"
 
 /// Dumb “short” tile (thumbnail) component.
 /// Model: URL string for the image.

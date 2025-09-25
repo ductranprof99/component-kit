@@ -9,6 +9,10 @@
 #import "CellModel.h"
 #import "CustomNetworkImageView.h"
 #import "NSDate_Ext.h"
+#import "UserVideoPostSection.h"
+#import "UserRepostSection.h"
+#import "UserNormalPostSection.h"
+#import "UserPostLikeSection.h"
 
 @interface UserPostCell : CKCompositeComponent
 + (instancetype)newWithModel: (CellModel *)model;

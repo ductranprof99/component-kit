@@ -9,6 +9,7 @@
 #import "CKComponent_Ext.h"
 #import "UIColor+Hex.h"
 #import "CustomTextView.h"
+#import "ComponentKitViewViewModel.h"
 
 @implementation UserPostCell
 + (instancetype)newWithModel:(CellModel *)model
@@ -123,39 +124,23 @@
             children.push_back({ .component = t });
         }
     }
+    
+    
+    CKComponent *additionLayout = nil;
     if (model.userPostType == UserPostTypeNormal) {
         if ([model.listImageURL count] != 0) {
-            CKComponent *imageLayout = [
-                CKComponent
-                newWithView: {
-                    [UIView class]
-                }
-                size:{
-                    .width = CKRelativeDimension::Percent(1),
-                    .height = CKRelativeDimension::Points(400),
-                }
-            ];
-            
-            children.push_back({
-                .component = imageLayout
-            });
+            additionLayout = [UserNormalPostSection newWithModel:model];
         }
     } else if (model.userPostType == UserPostTypeVideo) {
-        CKComponent *videoLayout = [
-            CKComponent
-            newWithView: {
-                [UIView class]
-            }
-            size:{
-                .width = CKRelativeDimension::Percent(1),
-                .height = CKRelativeDimension::Points(400),
-            }
-        ];
-        children.push_back({
-            .component = videoLayout
-        });
+        additionLayout = [UserVideoPostSection newWithModel:model];
     } else { // Repost
-        
+        additionLayout = [UserRepostSection newWithModel:model];
+    }
+    
+    if (additionLayout) {
+        children.push_back({
+            .component = additionLayout
+        });
     }
     
     CKComponent * bodySection = [
@@ -173,11 +158,15 @@
     ];
     
     CKComponent *likeSection = [
-        CKComponent
-        newWithView: {
-            [UIView class]
+        UserPostLikeSection
+        newWithModel: model
+        likeAction:{
+            [ComponentKitViewViewModel sharedInstance],
+            @selector(didTapLike:isLiked:)
         }
-        size:{}
+        commentAction:{
+            [ComponentKitViewViewModel sharedInstance],
+            @selector(didTapLike:isLiked:)}
     ];
     
     CKComponent *totalCombine = [

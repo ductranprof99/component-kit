@@ -35,6 +35,7 @@
 
 // cell utility
 @property (nonatomic, copy) NSNumber *likeCount;
+@property (nonatomic, assign) BOOL isLiked;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSArray<NSDictionary *> *comments;
 @property (nonatomic, copy, readwrite) NSString *userAvatarURL;
@@ -47,4 +48,3 @@
  // key value
 @property (nonatomic, copy) NSString *reuseKey;
 @end
-

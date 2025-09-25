@@ -10,6 +10,8 @@
 #import "CellDataLoader.h"
 #import "WrapperComponent.h"
 #import "CellContext.h"
+#import "ComponentKitViewViewModel.h"
+
 
 @interface ComponentKitViewController () <CKComponentProvider, UICollectionViewDelegateFlowLayout>
 
@@ -25,6 +27,7 @@
 
 - (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout
 {
+    [ComponentKitViewViewModel sharedInstance];
     if (self = [super initWithCollectionViewLayout:layout]) {
         _sizeRangeProvider = [CKComponentFlexibleSizeRangeProvider providerWithFlexibility:CKComponentSizeRangeFlexibleHeight];
         _cellDataLoader = [[CellDataLoader alloc] init];
@@ -42,6 +45,7 @@
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.delegate = self;
 }
+
 - (void)viewWillAppear: (BOOL) animated
 {
     [super viewWillAppear:animated];
@@ -65,9 +69,9 @@
      sizeRange:sizeRange];
     
     _dataSource = [[CKCollectionViewTransactionalDataSource alloc]
-                       initWithCollectionView:self.collectionView
-                       supplementaryViewDataSource:nil
-                       configuration:config];
+                   initWithCollectionView:self.collectionView
+                   supplementaryViewDataSource:nil
+                   configuration:config];
     
     // Insert section 0.
     CKTransactionalComponentDataSourceChangeset *initial =
@@ -82,12 +86,12 @@
     [firstBatch enumerateObjectsUsingBlock:^(CellModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         items[[NSIndexPath indexPathForItem:idx inSection:0]] = obj;
     }];
-
+    
     CKTransactionalComponentDataSourceChangeset *insertItems =
     [[[CKTransactionalComponentDataSourceChangesetBuilder transactionalComponentDataSourceChangeset]
       withInsertedItems:items]
      build];
-
+    
     [_dataSource applyChangeset:insertItems mode:CKUpdateModeAsynchronous userInfo:nil];
 }
 
@@ -97,21 +101,21 @@
                   layout:(UICollectionViewLayout *)collectionViewLayout
   sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  return [_dataSource sizeForItemAtIndexPath:indexPath];
+    return [_dataSource sizeForItemAtIndexPath:indexPath];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView
        willDisplayCell:(UICollectionViewCell *)cell
     forItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  [_dataSource announceWillDisplayCell:cell];
+    [_dataSource announceWillDisplayCell:cell];
 }
 
 - (void)collectionView:(UICollectionView *)collectionView
   didEndDisplayingCell:(UICollectionViewCell *)cell
     forItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  [_dataSource announceDidEndDisplayingCell:cell];
+    [_dataSource announceDidEndDisplayingCell:cell];
 }
 
 #pragma mark - Load helper
@@ -128,5 +132,4 @@
   // A simple label row with full-width layout and dynamic height.
     return [WrapperComponent newWithCellModel:model];
 }
-
 @end

@@ -98,5 +98,99 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B2AAEDAF-3096-4DA0-8A13-088EF1C14364"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "componentkit/ComponentKit/Utilities/CKComponentAction.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "CKTypedComponentAction(target, selector)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B2AAEDAF-3096-4DA0-8A13-088EF1C14364 - 68e14e01f6f5d86"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CKTypedComponentAction&lt;&gt;::CKTypedComponentAction(objc_object*, objc_selector*)"
+                  moduleName = "ComponentKit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ductd/Documents/Learn/CKTest/componentkit/ComponentKit/Utilities/CKComponentAction.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "100"
+                  endingLineNumber = "100">
+               </Location>
+               <Location
+                  uuid = "B2AAEDAF-3096-4DA0-8A13-088EF1C14364 - 824a48827717e220"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CKTypedComponentAction&lt;objc_object* __strong&gt;::CKTypedComponentAction(objc_object*, objc_selector*)"
+                  moduleName = "ComponentKit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ductd/Documents/Learn/CKTest/componentkit/ComponentKit/Utilities/CKComponentAction.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "100"
+                  endingLineNumber = "100">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CBF046CD-8CB6-4CB7-A623-07FB81BCB5DF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../Library/Developer/Xcode/DerivedData/CKTest-bhzunidwjvqbcnajtppdpvpirrdz/Build/Products/Debug-iphonesimulator/ComponentKit.framework/Headers/CKComponentAction.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "CKTypedComponentAction(target, selector)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C09524DD-EEE3-4C3C-A737-CCFF948A664D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CKTest/ComponentKitVC/UI/Subviews/UserPost/UserPostCell.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "+newWithModel:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AAF8B201-B5C4-48DD-8E36-56A6984588EE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CKTest/ComponentKitVC/UI/Subviews/UserPost/UserPostCell.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
+            landmarkName = "+newWithModel:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

@@ -12,9 +12,6 @@
 //
 
 #import "ShortItemComponent.h"
-#import <UIKit/UIKit.h>
-#import "AppImageDownloader.h"
-#import "CKComponent_Ext.h"
 
 @implementation ShortItemComponent {
     CKTypedComponentAction<ListShortCellShortItem *> _action;

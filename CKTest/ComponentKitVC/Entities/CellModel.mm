@@ -55,6 +55,19 @@ CellModel *CellModelFromDict(NSDictionary *dict) {
                 model.postedDate = parsedPosted;
             }
             
+            id likedVal = dict[@"isLiked"];
+            if (likedVal != nil) {
+                if ([likedVal isKindOfClass:[NSNumber class]]) {
+                    model.isLiked = [(NSNumber *)likedVal boolValue];
+                } else if ([likedVal isKindOfClass:[NSString class]]) {
+                    model.isLiked = [((NSString *)likedVal) boolValue];
+                } else {
+                    model.isLiked = arc4random_uniform(2) == 1;
+                }
+            } else {
+                model.isLiked = arc4random_uniform(2) == 1;
+            }
+            
             switch (model.userPostType) {
                 case UserPostTypeNone:
                     break;
@@ -184,6 +197,7 @@ NSArray *cellListData(void)
                 @"userName": @"john",
                 @"userAvatarURL": @"https://picsum.photos/40/40?u=normal",
                 @"postedDate": @((i == 0) ? (now - 30) : (i == 1 ? (now - 90 * 60) : (now - 26 * 3600))),
+                @"isLiked": @(arc4random_uniform(2)),
             }];
         }
         
@@ -213,6 +227,7 @@ NSArray *cellListData(void)
 
             // Insert random images
             post[@"images"] = randImgs;
+            post[@"isLiked"] = @(arc4random_uniform(2));
             [mutableData addObject:post];
         }
 
@@ -228,6 +243,7 @@ NSArray *cellListData(void)
                 @"userName": @"john",
                 @"userAvatarURL": @"https://picsum.photos/40/40?u=video",
                 @"postedDate": (i == 0) ? @((long long)((now - 5 * 60) * 1000.0)) : @"2023-08-15T10:00:00Z",
+                @"isLiked": @(arc4random_uniform(2)),
             }];
         }
 
@@ -254,7 +270,8 @@ NSArray *cellListData(void)
        @"userUpdatedAvatar":@"https://picsum.photos/200/200?avatar",
                 @"userName": @"john",
                 @"postedDate": @(now - 2 * 3600),
-           @"userAvatarURL": @"https://picsum.photos/40/40?u=change"
+           @"userAvatarURL": @"https://picsum.photos/40/40?u=change",
+           @"isLiked": @(arc4random_uniform(2)),
         }];
         
         [mutableData addObject:@{
@@ -262,7 +279,8 @@ NSArray *cellListData(void)
             @"postedDate": @((long long)((now - 3 * 24 * 3600) * 1000.0)),
             @"subType": @(UserPostTypeUpdateAvatar),
             @"userName": @"john",
-            @"userAvatarURL": @"https://picsum.photos/40/40?u=change2"
+            @"userAvatarURL": @"https://picsum.photos/40/40?u=change2",
+            @"isLiked": @(arc4random_uniform(2)),
         }]; // fallback to current avatar
 
         // 3) Repost: with >= 1 subpost
@@ -282,7 +300,8 @@ NSArray *cellListData(void)
                     @"userName": @"lisa",
                     @"likeCount": @(5),
                     @"userAvatarURL": @"https://picsum.photos/40/40?u=lisa" }
-            ]
+            ],
+            @"isLiked": @(arc4random_uniform(2)),
         }];
 
        
