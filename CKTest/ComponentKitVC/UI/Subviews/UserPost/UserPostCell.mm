@@ -103,13 +103,13 @@
     if ([model.postText isKindOfClass:[NSString class]]) {
         NSString *trimmed = [model.postText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if (trimmed.length > 0) {
-            CKComponent *textComponent = [
+            CKComponent *t = [
                 CustomTextView
                 newWithTextAttribute: {
-                    .string = @"ádfasdfasdfhjasdjflkasjdlkfjjaskldjflkasjdlfjaskldfjlaksjdfkl;ạdlkfjalksdjfl;kạdflkajsldkfjal;ksdjfl;ạdklfajslkdfjalksjdfl;ạdlfjasldjflasjdflasjdlkfjasl;djflk;ádjlkfjsal;kdfjalksjdfl;kạdlfjasl;kdfjal;ksdjflk;ạdfl;kádlkfjals;djfl;kạdfasđkljfádfasdfasdfhjasdjflkasjdl------kạdlfjasl;kdfjal;ksdjflk;ạdfl;kádlkfjals;djfl;kạdfasđkljf----",
+                    .string = @"asdfasdfnasdnjfasdclkjasdjfjasdjfalksjdfklasjdflkajsldkfjalsdjflaskjdalksdjflkajsdlkfjalskdjflasjdlkfajsldjfalsjdflajsdlfjasldjfalksjdflaksjdlfkajsldfj-------asdfasdfasd-f-------as-df-as-d-asdfasdfasd",
                     .font = [
                         UIFont
-                        systemFontOfSize:12
+                        systemFontOfSize:14
                         weight: 0.2
                     ],
                         .color = [UIColor whiteColor]
@@ -117,14 +117,12 @@
                 size:{
                     .width = CKRelativeDimension::Percent(1),
                     .height = CKRelativeDimension::Auto(),
-                    .minHeight = CKRelativeDimension::Points(50),
                 }
-                lineLimit: 3
             ];
-            children.push_back({ .component = textComponent });
+            
+            children.push_back({ .component = t });
         }
     }
-    
     if (model.userPostType == UserPostTypeNormal) {
         if ([model.listImageURL count] != 0) {
             CKComponent *imageLayout = [
@@ -143,7 +141,19 @@
             });
         }
     } else if (model.userPostType == UserPostTypeVideo) {
-        
+        CKComponent *videoLayout = [
+            CKComponent
+            newWithView: {
+                [UIView class]
+            }
+            size:{
+                .width = CKRelativeDimension::Percent(1),
+                .height = CKRelativeDimension::Points(400),
+            }
+        ];
+        children.push_back({
+            .component = videoLayout
+        });
     } else { // Repost
         
     }

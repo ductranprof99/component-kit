@@ -7,160 +7,94 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C2CC4EA5-2A0F-44BB-B57A-FC99627DAB42"
+            uuid = "03364788-FE44-4615-906F-402EEF167668"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/TransactionalDataSources/Common/CKTransactionalComponentDataSource.mm"
+            filePath = "componentkit/ComponentTextKit/TextKit/CKTextKitRenderer.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
-            landmarkName = "-componentScopeHandleWithIdentifier:rootIdentifier:didReceiveStateUpdate:mode:"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
+            landmarkName = "-drawInContext:bounds:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8919AD71-FD92-4DF4-8818-EF49D83224F9"
+            uuid = "1224EA93-4E51-4E66-ACA0-D169A1659EBD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CKTest/Helper/CustomTextView/CustomTextView.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "12"
+            endingLineNumber = "12"
+            landmarkName = "+newWithTextAttribute:size:"
+            landmarkType = "6">
+            <Locations>
+               <Location
+                  uuid = "1224EA93-4E51-4E66-ACA0-D169A1659EBD - 1526dce130c4f10b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[CustomTextViewState expanded]"
+                  moduleName = "CKTest.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ductd/Documents/Learn/CKTest/CKTest/Helper/CustomTextView/CustomTextView.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12">
+               </Location>
+               <Location
+                  uuid = "1224EA93-4E51-4E66-ACA0-D169A1659EBD - a083df0d8c30d509"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[CustomTextViewState setExpanded:]"
+                  moduleName = "CKTest.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ductd/Documents/Learn/CKTest/CKTest/Helper/CustomTextView/CustomTextView.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "864B0F46-8D60-415A-8870-8E71F1554D8F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/TransactionalDataSources/Common/CKTransactionalComponentDataSource.mm"
+            filePath = "CKTest/Helper/CustomTextView/CustomTextView.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
-            landmarkName = "-componentScopeHandleWithIdentifier:rootIdentifier:didReceiveStateUpdate:mode:"
+            startingLineNumber = "109"
+            endingLineNumber = "109"
+            landmarkName = "-didTap:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "02C4996D-4216-4A9F-8B5E-43005A02209B"
+            uuid = "10D183BD-90FC-4D56-A0B8-2E9EE1D0150D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/TransactionalDataSources/Common/CKTransactionalComponentDataSource.mm"
+            filePath = "CKTest/Helper/CustomTextView/CustomTextView.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
-            landmarkName = "-componentScopeHandleWithIdentifier:rootIdentifier:didReceiveStateUpdate:mode:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "BCC86848-056D-443E-8F6E-0AA5929124BB"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/TransactionalDataSources/Common/CKTransactionalComponentDataSource.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
-            landmarkName = "-_processStateUpdates"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "39EB8865-29B0-4CE9-B0D3-F88D775B8347"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/TransactionalDataSources/Common/CKTransactionalComponentDataSource.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "172"
-            endingLineNumber = "172"
-            landmarkName = "-didReceiveReflowComponentsRequest"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "43248309-F1E8-4F0B-9DDE-38E481E1A9C1"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/TransactionalDataSources/Common/CKTransactionalComponentDataSource.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
-            landmarkName = "-_processStateUpdates"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "CE41B70A-8327-480E-8B4E-FF6CBFB4CB7B"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/TransactionalDataSources/Common/CKTransactionalComponentDataSource.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "180"
-            endingLineNumber = "180"
-            landmarkName = "-_enqueueModification:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "87134428-6F16-4CA1-B566-0A8A368762B9"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "componentkit/ComponentKit/TransactionalDataSources/Common/CKTransactionalComponentDataSource.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
-            landmarkName = "-didReceiveReflowComponentsRequest"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "CD58E714-53EB-400B-A3D4-394FF1D9F7A2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CKTest/ComponentKitVC/UI/Subviews/ListShort/SubViews/ShortItemComponent.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "97"
-            endingLineNumber = "97"
-            landmarkName = "-didTap"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "07D6172D-39F9-4D8D-B802-167DAD58E448"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CKTest/ComponentKitVC/UI/Subviews/ListShort/SubViews/ShortItemComponent.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
-            landmarkName = "+newWithItem:action:"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
+            landmarkName = "-didTap:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

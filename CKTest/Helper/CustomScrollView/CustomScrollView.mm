@@ -97,7 +97,7 @@ showsHorizontalScrollIndicator:(BOOL)showsHorizontalIndicator
     
     // Feed content via the real API
     if (csv.content) {
-        [hosting updateModel:csv.content mode:CKUpdateModeSynchronous];
+        [hosting updateModel:csv.content mode:CKUpdateModeAsynchronous];
     }
     
     // Update axis-size constraint to reflect current content.
