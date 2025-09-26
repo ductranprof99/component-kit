@@ -10,6 +10,7 @@
 @implementation ComponentKitViewViewModel {
     NSMutableArray<CellModel *> *_mutable;
     dispatch_queue_t _vmQueue;
+    CellDataLoader *_cellDataLoader;
 }
 
 + (instancetype)sharedInstance {
@@ -21,6 +22,7 @@
     if ((self = [super init])) {
         _vmQueue = dispatch_queue_create("vm.queue", DISPATCH_QUEUE_SERIAL);
         _mutable = [NSMutableArray array];
+        _cellDataLoader = [[CellDataLoader alloc] init];
     }
     return self;
 }
@@ -28,27 +30,43 @@
 
 - (NSArray<CellModel *> *)items { return _mutable.copy; }
 
+
 - (void)toggleLikeAtIndexPath:(NSIndexPath *)ip {
     dispatch_async(_vmQueue, ^{
-        if (ip.item >= _mutable.count) return;
-        CellModel *m = _mutable[ip.item];
-        m.isLiked = !m.isLiked;
-        void (^emit)(void) = ^{ if (self.onChange) self.onChange(@[ip], @[]); };
-        dispatch_async(dispatch_get_main_queue(), emit);
+        if (ip.section != 0 || ip.item >= _mutable.count) {
+            return;
+        }
+        
+        CellModel *old = _mutable[ip.item];
+        _mutable[ip.item] = [old newModelWithToggleLike];
+        if (self.onChange) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.onChange(@[ip], @[]);
+            });
+        }
     });
 }
 
 - (void)loadNextPage {
-//    dispatch_async(_vmQueue, ^{
-//        // fetch/append; collect new indexPaths
-//        NSMutableArray<NSIndexPath *> *inserted = [NSMutableArray array];
-//        NSInteger start = _mutable.count;
-//        NSArray<CellModel *> *batch = /* your loader */ cellListData(); // or next page
-//        for (NSUInteger i = 0; i < batch.count; i++) { [_mutable addObject:batch[i]];
-//            [inserted addObject:[NSIndexPath indexPathForItem:(start + i) inSection:0]];
-//        }
-//        dispatch_async(dispatch_get_main_queue(), ^{ if (self.onChange) self.onChange(@[], inserted); });
-//    });
+    const int pageCount = 4;
+    dispatch_async(_vmQueue, ^{
+        NSArray<CellModel *> *batch = [_cellDataLoader fetchNextWithCount:pageCount];
+        NSInteger start = _mutable.count;
+        [_mutable addObjectsFromArray:batch];
+        NSMutableArray<NSIndexPath *> *inserted = [NSMutableArray new];
+        for (NSUInteger i = 0; i < batch.count; i++) {
+            [inserted addObject:[NSIndexPath indexPathForItem:(start + i) inSection:0]];
+        }
+        
+        dispatch_async(
+            dispatch_get_main_queue(),
+            ^{
+                if (self.onChange) {
+                    self.onChange(@[], inserted);
+                }
+            }
+        );
+    });
 }
 
 - (void)didTapComment: (id)sender
@@ -59,9 +77,23 @@
 - (void)didTapLike:(id)sender
          withModel: (CellModel *)cellmodel
            isLiked:(BOOL)liked {
-    
-    NSLog(@"Hahahhahahahahahaha");
-    
+    dispatch_async(_vmQueue, ^{
+        NSUInteger idx = NSNotFound;
+        for (NSUInteger i = 0; i < _mutable.count; i++) {
+            CellModel *m = _mutable[i];
+            if ([m.uuidString isEqualToString:cellmodel.uuidString]) {
+                idx = i;
+                break;
+            }
+        }
+        if (idx == NSNotFound) {
+            return;
+        }
+        
+        NSIndexPath *idxP = [NSIndexPath indexPathForItem:idx inSection:0];
+        
+        [self toggleLikeAtIndexPath:idxP];
+    });
 }
 
 @end

@@ -20,7 +20,7 @@
 @property (nonatomic, copy) NSString *postText;
 @end
 
-@interface CellModel : NSObject
+@interface CellModel : NSObject <NSCopying>
 // main character
 @property (atomic) NSString* uuidString;
 @property (nonatomic) CellModelType cellType;
@@ -47,4 +47,7 @@
 
  // key value
 @property (nonatomic, copy) NSString *reuseKey;
+
+#pragma mark - Methods
+- (CellModel *)newModelWithToggleLike;
 @end

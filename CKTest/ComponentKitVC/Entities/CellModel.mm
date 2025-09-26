@@ -12,9 +12,6 @@
 #import "NSDate_Ext.h"
 
 // Make read-only avatar URLs writeable within this translation unit
-@interface CellModel ()
-@end
-
 @interface SubPost ()
 @property (nonatomic, copy, readwrite) NSString *userAvatarURL;
 @end
@@ -42,7 +39,12 @@ CellModel *CellModelFromDict(NSDictionary *dict) {
         case CellModelTypeUserPost: {
             // 2) User post variants
             // Common meta
-            id likeCount = dict[@"likeCount"]; if (likeCount) model.likeCount = likeCount;
+            id likeCount = dict[@"likeCount"];
+            if (likeCount) {
+                model.likeCount = likeCount;
+            } else {
+                model.likeCount = 0;
+            }
             NSArray *comments = dict[@"comments"]; if ([comments isKindOfClass:[NSArray class]]) model.comments = comments;
             NSString *userName = dict[@"userName"]; if (userName) model.userName = userName;
             NSString *avatarURL = dict[@"userAvatarURL"]; if ([avatarURL isKindOfClass:[NSString class]] && avatarURL.length > 0) model.userAvatarURL = avatarURL;
@@ -321,6 +323,40 @@ NSArray *cellListData(void)
 }
 
 @implementation CellModel
+- (id)copyWithZone:(NSZone *)zone {
+    CellModel *m = [[[self class] allocWithZone:zone] init];
+    m.uuidString = self.uuidString;
+    m.cellType = self.cellType;
+    m.userPostType = self.userPostType;
+    
+    m.postText = self.postText;
+    m.videoURL = self.videoURL;
+    m.listImageURL = self.listImageURL;
+    m.userUpdatedAvatar = self.userUpdatedAvatar;
+    m.subPosts = self.subPosts;
+    
+    m.likeCount = self.likeCount;
+    m.isLiked = self.isLiked;
+    m.userName = self.userName;
+    m.comments = self.comments;
+    m.userAvatarURL = self.userAvatarURL;
+    m.postedDate = self.postedDate;
+    
+    m.listShortURL = self.listShortURL;
+    m.recommendVideoURL = self.recommendVideoURL;
+    
+    m.reuseKey = self.reuseKey;
+    return m;
+}
+
+- (CellModel *)newModelWithToggleLike {
+    CellModel *m = [self copy];
+    m.isLiked = !self.isLiked;
+    auto count = [self.likeCount intValue] + (m.isLiked ? 1 : -1);
+    m.likeCount = @(count);
+    return m;
+}
+
 @end
 
 

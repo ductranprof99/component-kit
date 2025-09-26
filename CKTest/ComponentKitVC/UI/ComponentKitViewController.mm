@@ -7,31 +7,45 @@
 #import <ComponentKit/ComponentKit.h>
 #import "ComponentKitViewController.h"
 #import "CellModel.h"
-#import "CellDataLoader.h"
+
 #import "WrapperComponent.h"
 #import "CellContext.h"
 #import "ComponentKitViewViewModel.h"
 
 
 @interface ComponentKitViewController () <CKComponentProvider, UICollectionViewDelegateFlowLayout>
+@property (nonatomic, strong) ComponentKitViewViewModel *viewmodel;
 
+- (void) loadNewDataFromVM:(NSArray<NSIndexPath *> *) indexPath;
+- (void) changeDataFromVM:(NSIndexPath *) indexPath;
 @end
 
 @implementation ComponentKitViewController
 {
     CKCollectionViewTransactionalDataSource *_dataSource;
     CKComponentFlexibleSizeRangeProvider *_sizeRangeProvider;
-    CellDataLoader *_cellDataLoader;
+    
     BOOL isRendered;
 }
 
 - (instancetype)initWithCollectionViewLayout:(UICollectionViewLayout *)layout
 {
-    [ComponentKitViewViewModel sharedInstance];
     if (self = [super initWithCollectionViewLayout:layout]) {
+        self.viewmodel = [ComponentKitViewViewModel sharedInstance];
+        __weak ComponentKitViewController* weakSelf = self;
+        self.viewmodel.onChange = ^(
+            NSArray<NSIndexPath *> *reloaded,
+            NSArray<NSIndexPath *> *inserted
+        ) {
+            if (reloaded.count != 0) {
+                [weakSelf changeDataFromVM:reloaded.firstObject];
+            } else if (inserted.count != 0) {
+                [weakSelf loadNewDataFromVM:inserted];
+            }
+
+        };
+        
         _sizeRangeProvider = [CKComponentFlexibleSizeRangeProvider providerWithFlexibility:CKComponentSizeRangeFlexibleHeight];
-        _cellDataLoader = [[CellDataLoader alloc] init];
-        // Demo data
     }
     isRendered = NO;
     return self;
@@ -44,11 +58,15 @@
     self.collectionView.backgroundColor = [UIColor whiteColor];
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.delegate = self;
+    
+    [self.viewmodel loadNextPage];
 }
 
 - (void)viewWillAppear: (BOOL) animated
 {
     [super viewWillAppear:animated];
+    
+    
     if (isRendered) {
         return;
     }
@@ -92,27 +110,70 @@
         userInfo:nil
     ];
     
-    // Insert an initial batch of items so we actually render cells.
-    NSArray<CellModel *> *firstBatch = [_cellDataLoader fetchNextWithCount:10];
-    NSMutableDictionary<NSIndexPath *, CellModel *> *items = [NSMutableDictionary new];
-    [firstBatch enumerateObjectsUsingBlock:^(CellModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        items[[NSIndexPath indexPathForItem:idx inSection:0]] = obj;
-    }];
+  
+}
+
+- (void)changeDataFromVM:(NSIndexPath *)indexPath {
+    if (!indexPath) return;
     
-    CKTransactionalComponentDataSourceChangeset *insertItems = [
+    CKTransactionalComponentDataSourceChangesetBuilder *b =
+    [
+        CKTransactionalComponentDataSourceChangesetBuilder
+        transactionalComponentDataSourceChangeset
+    ];
+    
+    NSMutableDictionary<NSIndexPath *, CellModel *> *reloaded = [NSMutableDictionary new];
+    NSArray<CellModel *> *items = self.viewmodel.items;
+    
+    if (indexPath.section == 0 && indexPath.item < items.count) {
+        reloaded[indexPath] = items[indexPath.item];
+    }
+    
+    CKTransactionalComponentDataSourceChangeset *cs =[
         [
-            [
-                CKTransactionalComponentDataSourceChangesetBuilder
-                transactionalComponentDataSourceChangeset
-            ]
-            withInsertedItems : items
+            b
+            withUpdatedItems:reloaded
         ]
         build
     ];
     
     [
         _dataSource
-        applyChangeset:insertItems
+        applyChangeset:cs
+        mode:CKUpdateModeAsynchronous
+        userInfo:nil
+    ];
+}
+
+- (void)loadNewDataFromVM:(NSArray<NSIndexPath *> *)indexPaths {
+    if (indexPaths.count == 0) return;
+
+    CKTransactionalComponentDataSourceChangesetBuilder *b = [
+        CKTransactionalComponentDataSourceChangesetBuilder
+        transactionalComponentDataSourceChangeset
+    ];
+
+    // Map indexPath -> model hiện tại trong VM
+    NSMutableDictionary<NSIndexPath *, CellModel *> *inserted = [NSMutableDictionary new];
+    NSArray<CellModel *> *items = self.viewmodel.items;
+
+    for (NSIndexPath *ip in indexPaths) {
+        if (ip.section == 0 && ip.item < items.count) {
+            inserted[ip] = items[ip.item];
+        }
+    }
+
+    CKTransactionalComponentDataSourceChangeset *cs = [
+        [
+            b
+            withInsertedItems:inserted
+        ]
+        build
+    ];
+
+    [
+        _dataSource
+        applyChangeset:cs
         mode:CKUpdateModeAsynchronous
         userInfo:nil
     ];
@@ -159,7 +220,28 @@
 #pragma mark - Detect last load
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    NSLog(@"hhahahahahh");
+    BOOL isEnd =scrolledToBottomWithBuffer(
+                   scrollView.contentOffset,
+                   scrollView.contentSize,
+                   scrollView.contentInset,
+                   scrollView.bounds
+                );
+
+    if (isEnd) {
+        [_viewmodel loadNextPage];
+    }
+}
+
+static BOOL scrolledToBottomWithBuffer(
+    CGPoint contentOffset,
+    CGSize contentSize,
+    UIEdgeInsets contentInset,
+    CGRect bounds
+) {
+    CGFloat buffer = CGRectGetHeight(bounds) - contentInset.top - contentInset.bottom;
+    const CGFloat maxVisibleY = (contentOffset.y + bounds.size.height);
+    const CGFloat actualMaxY = (contentSize.height + contentInset.bottom);
+    return ((maxVisibleY + buffer) >= actualMaxY);
 }
 
 @end

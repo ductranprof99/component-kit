@@ -7,12 +7,16 @@
 
 #import <Foundation/Foundation.h>
 #import "CellModel.h"
-
+#import "CellDataLoader.h"
 @interface ComponentKitViewViewModel : NSObject
 @property (atomic, copy, readonly) NSArray<CellModel *> *items;
+@property (nonatomic, copy) void (^onChange)(
+        NSArray<NSIndexPath *> *reloaded,
+        NSArray<NSIndexPath *> *inserted
+);
+
 
 + (instancetype)sharedInstance;
-
 - (void)didTapLike:(id)sender
          withModel: (CellModel *)cellmodel
            isLiked:(BOOL)liked;
@@ -22,5 +26,5 @@
 
 - (void)toggleLikeAtIndexPath:(NSIndexPath *)indexPath;
 - (void)loadNextPage;
-@property (nonatomic, copy) void (^onChange)(NSArray<NSIndexPath *> *reloaded, NSArray<NSIndexPath *> *inserted);
+
 @end

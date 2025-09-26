@@ -10,6 +10,8 @@
 #import "CellModel.h"
 #import "CustomNetworkImageView.h"
 #import "NSDate_Ext.h"
+#import "CKComponent_Ext.h"
+#import "UIColor+Hex.h"
 
 @interface UserPostLikeSection : CKCompositeComponent
 
@@ -19,6 +21,7 @@
 
 + (CKComponent *) likeButtonLayoutWithModel: (CellModel *)model;
 + (CKComponent *) commentButtonLayoutWithModel: (CellModel *)model;
++ (CKComponent *) paddingWithCornerRadiusWithComponent: (CKComponent *) component;
 - (void) didTapLike;
 - (void) didTapComment;
 @end

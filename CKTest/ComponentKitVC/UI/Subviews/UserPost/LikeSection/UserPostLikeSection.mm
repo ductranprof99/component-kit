@@ -20,7 +20,11 @@
     CKComponent *likeButton = [
         CKOverlayLayoutComponent
         newWithComponent: [
-            UserPostLikeSection likeButtonLayoutWithModel:model
+            UserPostLikeSection
+            itemOnStack: [
+                UserPostLikeSection
+                likeButtonLayoutWithModel:model
+            ]
         ]
         overlay: [
             CKComponent
@@ -36,7 +40,11 @@
     CKComponent *commentButton = [
         CKOverlayLayoutComponent
         newWithComponent: [
-            UserPostLikeSection commentButtonLayoutWithModel:model
+            UserPostLikeSection
+            itemOnStack: [
+                UserPostLikeSection
+                commentButtonLayoutWithModel:model
+            ]
         ]
         overlay: [
             CKComponent
@@ -55,7 +63,7 @@
         size:{}
         style:{
             .direction = CKStackLayoutDirectionHorizontal,
-            .spacing = 20
+            .spacing = 10
         }
         children:{
             { likeButton },
@@ -86,19 +94,21 @@
 + (CKComponent *) commentButtonLayoutWithModel: (CellModel *)model {
     UIImage *icon = [UIImage systemImageNamed:@"text.bubble"];
     
-    CKComponent *heart = [
+    CKComponent *head = [
         CKImageComponent
         newWithImage:icon
-        attributes:{}
+        attributes:{
+            {@selector(setTintColor:), [UIColor whiteColor]}
+        }
         size:{
             .width = CKRelativeDimension::Points(20),
             .height = CKRelativeDimension::Points(20),
         }
     ];
     
-    CKComponent *countLabel = nil;
+    CKComponent *tail = nil;
     if (model.comments.count > 0) {
-        countLabel = [
+        tail = [
             CKLabelComponent
             newWithLabelAttributes:{
                 .string = [NSString stringWithFormat:@"%lu", static_cast<unsigned long>(model.comments.count ?: 0)],
@@ -121,61 +131,51 @@
             .spacing = 10
         }
         children:{
-            { heart },
-            { countLabel },
+            { head },
+            { tail }
         }
     ];
 }
 
 
 + (CKComponent *) likeButtonLayoutWithModel: (CellModel *)model {
-    UIImage *base = model.isLiked ? [UIImage systemImageNamed:@"heart.fill"] : [UIImage systemImageNamed:@"heart"];
+    UIImage *base = model.isLiked ? [UIImage imageNamed:@"heart.filled"] : [UIImage imageNamed:@"heart"];
     UIImage *icon = [base imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
-    CKComponent *heart = [
+    CKComponent *head = [
         CKImageComponent
         newWithImage:icon
-        attributes:{}
+        attributes:{
+            {@selector(setTintColor:), model.isLiked ? [UIColor redColor] : [UIColor whiteColor]}
+        }
         size:{
             .width = CKRelativeDimension::Points(20),
             .height = CKRelativeDimension::Points(20),
         }
     ];
 
-    UIColor *tint = model.isLiked ? [UIColor systemRedColor] : [UIColor lightGrayColor];
-    CKComponent *tintContainer = [
-        CKComponent
-        newWithView:{ [UIView class], { { @selector(setTintColor:), tint } } }
-        size:{}
-    ];
+    CKComponent *tail = nil;
 
-    CKComponent *tintedHeart = [
-        CKOverlayLayoutComponent
-        newWithComponent:tintContainer
-        overlay:heart
-    ];
-
-    CKComponent *countLabel = [
-        CKLabelComponent
-        newWithLabelAttributes:{
-            .string = [NSString stringWithFormat:@"%@", model.likeCount ?: @0],
-            .font = [UIFont systemFontOfSize:14],
-            .color = [UIColor darkTextColor]
-        }
-        viewAttributes:{
-            {@selector(setBackgroundColor:), [UIColor clearColor]}
-        }
-        size:{}
-    ];
-
-    CKComponent *likeLabel = nil;
-    if (model.isLiked) {
-        likeLabel = [
+    if (!model.isLiked) {
+        tail = [
             CKLabelComponent
             newWithLabelAttributes:{
                 .string = @"Thích",
                 .font = [UIFont systemFontOfSize:14],
-                .color = [UIColor darkTextColor]
+                .color = [UIColor lightGrayColor]
+            }
+            viewAttributes:{
+                {@selector(setBackgroundColor:), [UIColor clearColor]}
+            }
+            size:{}
+        ];
+    } else {
+        tail = [
+            CKLabelComponent
+            newWithLabelAttributes:{
+                .string = [NSString stringWithFormat:@"%@", model.likeCount ?: @0],
+                .font = [UIFont systemFontOfSize:14],
+                .color = [UIColor lightGrayColor]
             }
             viewAttributes:{
                 {@selector(setBackgroundColor:), [UIColor clearColor]}
@@ -193,11 +193,28 @@
             .spacing = 10
         }
         children:{
-            { tintedHeart },
-            { countLabel },
-            { likeLabel }
+            { head },
+            { tail },
         }
     ];
 }
 
++ (CKComponent *) itemOnStack: (CKComponent *) component {
+    return
+    [
+        [
+            [
+                component
+                withPadding:{
+                    .top = 5,
+                    .bottom = 5,
+                    .left = 15,
+                    .right = 15
+                }
+            ]
+            withBackgroundColor: [UIColor colorWithHexString: @"2E2E2E"]
+        ]
+        cornerRaidus: 15
+    ];
+}
 @end
