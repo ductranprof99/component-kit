@@ -37,7 +37,7 @@
             <Locations>
                <Location
                   uuid = "1224EA93-4E51-4E66-ACA0-D169A1659EBD - 1526dce130c4f10b"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[CustomTextViewState expanded]"
@@ -51,7 +51,7 @@
                </Location>
                <Location
                   uuid = "1224EA93-4E51-4E66-ACA0-D169A1659EBD - a083df0d8c30d509"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "-[CustomTextViewState setExpanded:]"
@@ -102,7 +102,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "B2AAEDAF-3096-4DA0-8A13-088EF1C14364"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "componentkit/ComponentKit/Utilities/CKComponentAction.h"
@@ -115,7 +115,7 @@
             <Locations>
                <Location
                   uuid = "B2AAEDAF-3096-4DA0-8A13-088EF1C14364 - 68e14e01f6f5d86"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "CKTypedComponentAction&lt;&gt;::CKTypedComponentAction(objc_object*, objc_selector*)"
@@ -129,7 +129,7 @@
                </Location>
                <Location
                   uuid = "B2AAEDAF-3096-4DA0-8A13-088EF1C14364 - 824a48827717e220"
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "CKTypedComponentAction&lt;objc_object* __strong&gt;::CKTypedComponentAction(objc_object*, objc_selector*)"
@@ -189,6 +189,70 @@
             startingLineNumber = "141"
             endingLineNumber = "141"
             landmarkName = "+newWithModel:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D8EC9ACA-D960-48C1-B7D1-D48D9239BCE1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CKTest/ComponentKitVC/UI/ComponentKitViewController.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
+            landmarkName = "-collectionView:layout:sizeForItemAtIndexPath:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A379D2E1-F947-4203-B6B3-264DDE74F727"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CKTest/ComponentKitVC/UI/ComponentKitViewController.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
+            landmarkName = "-collectionView:willDisplayCell:forItemAtIndexPath:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "60CCDED3-751A-4F82-A2C6-8FE3DCE93554"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CKTest/ComponentKitVC/UI/ComponentKitViewController.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
+            landmarkName = "-collectionView:didEndDisplayingCell:forItemAtIndexPath:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0DD8F5CA-AFF3-4A81-8D83-1D6CD293C683"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CKTest/ComponentKitVC/UI/ComponentKitViewController.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
+            landmarkName = "+componentForModel:context:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

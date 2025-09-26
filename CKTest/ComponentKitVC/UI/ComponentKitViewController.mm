@@ -74,11 +74,23 @@
                    configuration:config];
     
     // Insert section 0.
-    CKTransactionalComponentDataSourceChangeset *initial =
-    [[[CKTransactionalComponentDataSourceChangesetBuilder transactionalComponentDataSourceChangeset]
-      withInsertedSections:[NSIndexSet indexSetWithIndex:0]]
-     build];
-    [_dataSource applyChangeset:initial mode:CKUpdateModeSynchronous userInfo:nil];
+    CKTransactionalComponentDataSourceChangeset *initial = [
+        [
+            [
+                CKTransactionalComponentDataSourceChangesetBuilder
+                transactionalComponentDataSourceChangeset
+            ]
+            withInsertedSections:[NSIndexSet indexSetWithIndex:0]
+        ]
+        build
+    ];
+    
+    [
+        _dataSource
+        applyChangeset:initial
+        mode:CKUpdateModeSynchronous
+        userInfo:nil
+    ];
     
     // Insert an initial batch of items so we actually render cells.
     NSArray<CellModel *> *firstBatch = [_cellDataLoader fetchNextWithCount:10];
@@ -87,12 +99,23 @@
         items[[NSIndexPath indexPathForItem:idx inSection:0]] = obj;
     }];
     
-    CKTransactionalComponentDataSourceChangeset *insertItems =
-    [[[CKTransactionalComponentDataSourceChangesetBuilder transactionalComponentDataSourceChangeset]
-      withInsertedItems:items]
-     build];
+    CKTransactionalComponentDataSourceChangeset *insertItems = [
+        [
+            [
+                CKTransactionalComponentDataSourceChangesetBuilder
+                transactionalComponentDataSourceChangeset
+            ]
+            withInsertedItems : items
+        ]
+        build
+    ];
     
-    [_dataSource applyChangeset:insertItems mode:CKUpdateModeAsynchronous userInfo:nil];
+    [
+        _dataSource
+        applyChangeset:insertItems
+        mode:CKUpdateModeAsynchronous
+        userInfo:nil
+    ];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout
@@ -132,4 +155,11 @@
   // A simple label row with full-width layout and dynamic height.
     return [WrapperComponent newWithCellModel:model];
 }
+
+#pragma mark - Detect last load
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    NSLog(@"hhahahahahh");
+}
+
 @end

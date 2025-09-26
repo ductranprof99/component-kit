@@ -14,8 +14,8 @@
 @interface UserPostLikeSection : CKCompositeComponent
 
 + (instancetype)newWithModel: (CellModel *)model
-                  likeAction: (const CKTypedComponentAction<BOOL> &)likeAction
-               commentAction: (const CKTypedComponentAction<BOOL> &) commentAction;
+                  likeAction: (const CKTypedComponentAction<CellModel *, BOOL> &)likeAction
+               commentAction: (const CKTypedComponentAction<CellModel *> &) commentAction;
 
 + (CKComponent *) likeButtonLayoutWithModel: (CellModel *)model;
 + (CKComponent *) commentButtonLayoutWithModel: (CellModel *)model;

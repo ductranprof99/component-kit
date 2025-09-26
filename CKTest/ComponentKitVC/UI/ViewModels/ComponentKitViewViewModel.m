@@ -51,12 +51,17 @@
 //    });
 }
 
-- (void)didTapComment:(id)sender {
+- (void)didTapComment: (id)sender
+            withModel: (CellModel *)cellmodel {
     NSLog(@"Hahahhahahahahahaha");
 }
 
-- (void)didTapLike:(id)sender isLiked:(BOOL)liked {
+- (void)didTapLike:(id)sender
+         withModel: (CellModel *)cellmodel
+           isLiked:(BOOL)liked {
+    
     NSLog(@"Hahahhahahahahahaha");
+    
 }
 
 @end

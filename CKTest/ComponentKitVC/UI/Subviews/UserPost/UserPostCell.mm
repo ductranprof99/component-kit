@@ -162,11 +162,11 @@
         newWithModel: model
         likeAction:{
             [ComponentKitViewViewModel sharedInstance],
-            @selector(didTapLike:isLiked:)
+            @selector(didTapLike:withModel:isLiked:)
         }
         commentAction:{
             [ComponentKitViewViewModel sharedInstance],
-            @selector(didTapLike:isLiked:)}
+            @selector(didTapComment:withModel:)}
     ];
     
     CKComponent *totalCombine = [

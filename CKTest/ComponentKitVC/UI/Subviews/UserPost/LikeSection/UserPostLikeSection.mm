@@ -9,13 +9,13 @@
 #import "UserPostLikeSection.h"
 
 @implementation UserPostLikeSection {
-    CKTypedComponentAction<BOOL> likeAction;
-    CKTypedComponentAction<BOOL> commentAction;
+    CKTypedComponentAction<CellModel *, BOOL> likeAction;
+    CKTypedComponentAction<CellModel *> commentAction;
     CellModel *model;
 }
-+ (instancetype)newWithModel:(CellModel *)model
-                  likeAction:(const CKTypedComponentAction<BOOL> &)likeAction
-               commentAction:(const CKTypedComponentAction<BOOL> &)commentAction
++ (instancetype)newWithModel: (CellModel *)model
+                  likeAction: (const CKTypedComponentAction<CellModel *, BOOL> &)likeAction
+               commentAction: (const CKTypedComponentAction<CellModel *> &) commentAction
 {
     CKComponent *likeButton = [
         CKOverlayLayoutComponent
@@ -75,11 +75,11 @@
 
 
 - (void)didTapLike {
-    likeAction.send(self, model.isLiked);
+    likeAction.send(self, model, !model.isLiked);
 }
 
 - (void)didTapComment {
-    commentAction.send(self, @1);
+    commentAction.send(self, model);
 }
 
 

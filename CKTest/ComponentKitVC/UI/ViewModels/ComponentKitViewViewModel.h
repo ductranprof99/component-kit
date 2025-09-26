@@ -10,10 +10,15 @@
 
 @interface ComponentKitViewViewModel : NSObject
 @property (atomic, copy, readonly) NSArray<CellModel *> *items;
+
 + (instancetype)sharedInstance;
-- (void)didTapLike:(id) sender
-           isLiked:(BOOL) liked;
-- (void)didTapComment:(id) sender;
+
+- (void)didTapLike:(id)sender
+         withModel: (CellModel *)cellmodel
+           isLiked:(BOOL)liked;
+
+- (void)didTapComment:(id) sender
+            withModel: (CellModel *)cellmodel;
 
 - (void)toggleLikeAtIndexPath:(NSIndexPath *)indexPath;
 - (void)loadNextPage;
