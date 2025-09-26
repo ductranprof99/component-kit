@@ -8,7 +8,6 @@
 
 #import "NewStatusChipComponent.h"
 #import "NewStatusChipModel.h"
-#import "ImageCell.h"
 #import "UIColor+Hex.h"
 
 @implementation NewStatusChipComponent

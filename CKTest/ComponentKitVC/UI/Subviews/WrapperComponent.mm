@@ -9,10 +9,10 @@
 #import "CellModel.h"
 #import <ComponentKit/CKComponent.h>
 #import "CellModelType.h"
-#import "ImageCell.h"
 #import "NewStatusCell.h"
 #import "ListShortCell.h"
 #import "UserPostCell.h"
+#import "RecommendVideoCell.h"
 
 @implementation WrapperComponent
 {
@@ -33,7 +33,7 @@
             body = [UserPostCell newWithModel:model];
             break;
         case CellModelTypeRecomendationVideo:
-            body = [ListShortCell newWithModel:model];
+            body = [RecommendVideoCell newWithModel:model];
             break;
     }
     return [super newWithComponent:body];

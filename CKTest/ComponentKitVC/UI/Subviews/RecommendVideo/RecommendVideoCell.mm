@@ -5,18 +5,10 @@
 //  Created by ductd on 15/9/25.
 //
 
-#import "ImageCell.h"
-#import <UIKit/UIKit.h>
-#import "CellModel.h"
-#import "AppImageDownloader.h"
+#import "RecommendVideoCell.h"
 
-@interface ImageCellState: NSObject
-@property (nonatomic, readonly) BOOL isExpand;
-
-- (instancetype)initWithExpaned:(NSInteger)expanded;
-@end
-
-@implementation ImageCellState
+#pragma mark - State
+@implementation RecommendVideoCellState
 
 - (instancetype)initWithExpaned:(NSInteger)expanded {
     if ((self = [super init])) {
@@ -27,20 +19,39 @@
 
 @end
 
-@interface MySongComponentController : CKComponentController
+
+#pragma mark - Controller
+@implementation RecommendVideoCellController
+- (void)didMount {
+    [super didMount];
+    // Setup after the component’s view is mounted
+    NSLog(@"Hey hey hey");
+}
+
+- (void)didRemount {
+    [super didRemount];
+    NSLog(@"This mtfk did remount");
+}
+
+- (void)didUnmount {
+    // Cleanup before the view goes away
+    [super didUnmount];
+}
+
 @end
 
-@implementation ImageCell
+
+#pragma mark - View
+@implementation RecommendVideoCell
 + (id)initialState {
-    return [[ImageCellState alloc] initWithExpaned: 0];
+    return [[RecommendVideoCellState alloc] initWithExpaned: 0];
 }
 
 
-+ (instancetype)newWithData:(CellModel *)model
-                    context:(CellContext *)context {
++ (instancetype)newWithModel:(CellModel *)model {
     NSURL *url = [NSURL URLWithString:  @"https://picsum.photos/400/300?1"];
     CKComponentScope scope(self);
-    const ImageCellState *state = scope.state();
+    const RecommendVideoCellState *state = scope.state();
     
     CKComponent *imgViewAsync = [CKNetworkImageComponent
                                  newWithURL: url
@@ -81,29 +92,17 @@
 
 - (void)didTap:(UITapGestureRecognizer *)gr {
     NSLog(@"Test sumthing wong");
-    [self updateState: ^(ImageCellState *old) {
-        ImageCellState *o = old;
-        return [[ImageCellState alloc] initWithExpaned: !o.isExpand];
-    } mode: CKUpdateModeSynchronous];
-}
-
-@end
-
-@implementation ImageCellController
-- (void)didMount {
-    [super didMount];
-    // Setup after the component’s view is mounted
-    NSLog(@"Hey hey hey");
-}
-
-- (void)didRemount {
-    [super didRemount];
-    NSLog(@"This mtfk did remount");
-}
-
-- (void)didUnmount {
-    // Cleanup before the view goes away
-    [super didUnmount];
+    [
+        self
+        updateState: ^(RecommendVideoCellState *old) {
+            RecommendVideoCellState *o = old;
+            return [
+                [RecommendVideoCellState alloc]
+                initWithExpaned: !o.isExpand
+            ];
+        }
+        mode: CKUpdateModeSynchronous
+    ];
 }
 
 @end

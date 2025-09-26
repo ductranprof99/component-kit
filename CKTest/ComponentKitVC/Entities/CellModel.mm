@@ -216,7 +216,7 @@ NSArray *cellListData(void)
             NSMutableDictionary *post = [@{
                 @"type": @(CellModelTypeUserPost),
                 @"subType": @(UserPostTypeNormal),
-                @"text": [NSString stringWithFormat:@"Post with image post #%ld: hello world! A string created by using format as a template into which the remaining argument values are substituted without any localization.", (long)i],
+                @"text": [NSString stringWithFormat:@"Post with image post #%ld: hello world! A string created by using format as a template into which the remaining argument values are substituted without any localization.hello world! A string created by using format as a template into which the remaining argument values are substituted without any localization.hello world! A string created by using format as a template into which the remaining argument values are substituted without any localization.hello world! A string created by using format as a template into which the remaining argument values are substituted without any localization.hello world! A string created by using format as a template into which the remaining argument values are substituted without any localization.", (long)i],
                 @"likeCount": @(10 + i),
                 @"comments": @[
                     @{ @"username": @"alice", @"comment": @"nice!" },

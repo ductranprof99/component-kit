@@ -1,5 +1,5 @@
 //
-//  ImageCell.h
+//  NewStatusCell.h
 //  CKTest
 //
 //  Created by ductd on 15/9/25.
